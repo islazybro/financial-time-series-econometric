@@ -162,6 +162,7 @@ pytest
 - [Pipeline completo](docs/pipeline.md)
 - [Pruebas y checks](docs/testing.md)
 - [Texto para CV y LinkedIn](docs/cv-project-entry.md)
+- [Revision final para reclutadores](docs/recruiter-review.md)
 
 ## Tecnologias
 

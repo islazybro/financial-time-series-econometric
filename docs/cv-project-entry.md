@@ -4,9 +4,11 @@
 
 **Analisis econometrico de series financieras | Python**
 
-- Reestructure desde cero un proyecto de series de tiempo financieras originalmente desarrollado en R.
-- Implemente analisis de estacionariedad, modelos ARIMA, pruebas ARCH/GARCH y VAR para estudiar precios y rendimientos de BBVA y Santander.
-- Documente el flujo completo en un repositorio reproducible con enfoque en interpretacion economica y buenas practicas de codigo.
+- Reconstrui en Python un proyecto de series de tiempo financieras originalmente desarrollado en R.
+- Analice acciones de BBVA y Santander mediante ADF, ARIMA, GARCH, VAR, causalidad de Granger e impulso-respuesta.
+- Automatice descarga, validacion, analisis, visualizaciones, pruebas con `pytest` y GitHub Actions.
+
+Repositorio: `https://github.com/islazybro/financial-time-series-econometric`
 
 ## Version media para LinkedIn o portafolio
 
@@ -26,6 +28,10 @@ Desarrolle una nueva version en Python de un proyecto de econometria financiera 
 - Pandas
 - Statsmodels
 - ARCH
+- Matplotlib
+- yfinance
+- pytest
+- GitHub Actions
 - Time Series Analysis
 - Econometrics
 - Financial Data Analysis

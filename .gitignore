@@ -16,3 +16,4 @@ data/raw/*.csv
 
 # Archivos locales de entorno
 .python-version
+desktop.ini

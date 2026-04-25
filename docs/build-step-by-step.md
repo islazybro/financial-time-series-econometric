@@ -53,7 +53,7 @@ Columnas aceptadas:
 - Fecha: `Fecha` o `Date`
 - Cierre: `Cierre`, `Close`, `Adj Close` o `Precio`
 
-Estado: descarga reproducible completada. Pendiente regenerar resultados con `BBVA.MC` y `SAN.MC`.
+Estado: completado con descarga reproducible y resultados finales para `BBVA.MC` y `SAN.MC`.
 
 Guia detallada:
 
@@ -128,7 +128,7 @@ Salida principal:
 
 - `outputs/analysis_report.md`
 
-Estado: completado con datos demo.
+Estado: completado con datos finales.
 
 Documentos de interpretacion:
 
@@ -148,7 +148,7 @@ Documentos utiles:
 - `docs/cv-project-entry.md`
 - `docs/references.md`
 
-Estado: iniciado.
+Estado: completado.
 
 ## Paso 9. Visualizaciones
 
@@ -166,7 +166,7 @@ Salida:
 docs/figures/
 ```
 
-Estado: iniciado.
+Estado: completado.
 
 ## Paso 10. Pipeline completo
 
@@ -184,14 +184,20 @@ Comando usando CSV existentes:
 python scripts/run_pipeline.py --skip-download
 ```
 
-Estado: iniciado.
+Estado: completado.
 
-## Siguiente bloque recomendado
+## Estado final
 
-El siguiente paso natural es reemplazar los datos demo por los CSV reales y revisar si cambian los resultados. Si aparece un error, se resuelve en esta secuencia:
+El proyecto ya cuenta con:
 
-1. confirmar nombres de columnas;
-2. confirmar formato de fechas;
-3. confirmar que no haya precios vacios o texto en la columna de cierre;
-4. ejecutar `scripts/run_analysis.py`;
-5. revisar `outputs/analysis_report.md`.
+- repositorio publicado en GitHub;
+- README orientado a portafolio;
+- datos descargables de forma reproducible;
+- validacion de datos;
+- analisis econometrico completo;
+- visualizaciones versionables;
+- interpretacion de resultados;
+- limitaciones metodologicas;
+- pruebas automatizadas;
+- GitHub Actions en verde;
+- pipeline completo con un solo comando.
