@@ -11,6 +11,43 @@ data/raw/BBVA.csv
 data/raw/SAN.csv
 ```
 
+## Opcion recomendada: descargar desde Yahoo Finance
+
+El proyecto incluye un script para descargar precios mensuales:
+
+```bash
+pip install -e .
+```
+
+```bash
+python scripts/download_prices.py
+```
+
+El primer comando instala las dependencias del proyecto, incluyendo `yfinance`.
+
+La configuracion vive en:
+
+```text
+config/data_sources.json
+```
+
+Configuracion inicial:
+
+- BBVA: `BBVA.MX`
+- Santander: `SAN.MC`
+- periodo: 2019-01-01 a 2026-01-01
+- frecuencia: mensual
+
+Importante: si quieres analizar otro mercado, cambia los tickers en `config/data_sources.json`. Por ejemplo, una accion puede tener ticker distinto si se toma de Mexico, Espana o Estados Unidos.
+
+Si aparece un error como `No module named yfinance`, vuelve a ejecutar:
+
+```bash
+pip install -e .
+```
+
+Si la descarga no devuelve datos, revisa el ticker en Yahoo Finance y actualiza `config/data_sources.json`.
+
 ## Formato esperado
 
 El formato minimo es:

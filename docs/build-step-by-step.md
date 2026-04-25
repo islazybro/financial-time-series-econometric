@@ -59,6 +59,12 @@ Guia detallada:
 
 - `docs/data-step.md`
 
+Comando de descarga:
+
+```bash
+python scripts/download_prices.py
+```
+
 Comando de validacion:
 
 ```bash

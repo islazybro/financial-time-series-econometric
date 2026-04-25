@@ -63,6 +63,7 @@ Este proyecto usa Python 3.11+ y las bibliotecas:
 - `statsmodels`
 - `arch`
 - `matplotlib`
+- `yfinance`
 
 ## Instalacion
 
@@ -80,6 +81,15 @@ Coloca tus archivos en `data/raw/` con los nombres:
 - `SAN.csv`
 
 El codigo acepta columnas con nombres como `Fecha`, `Date`, `Cierre`, `Close`, `Adj Close` o `Precio`.
+
+Tambien puedes descargarlos desde Yahoo Finance con:
+
+```bash
+pip install -e .
+python scripts/download_prices.py
+```
+
+Los tickers se configuran en `config/data_sources.json`.
 
 Antes de ejecutar el analisis con datos reales, valida los archivos:
 
