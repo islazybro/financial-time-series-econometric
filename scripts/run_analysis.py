@@ -6,7 +6,7 @@ from pathlib import Path
 import pandas as pd
 
 from econometria_financiera.data import combine_returns, load_price_series, preview_dataframe
-from econometria_financiera.io import write_csv
+from econometria_financiera.io import clean_analysis_outputs, write_csv
 from econometria_financiera.multivariate import forecast_var, fit_var, granger_causality, impulse_response_table
 from econometria_financiera.project_config import load_series_config
 from econometria_financiera.reporting import build_markdown_report, write_report
@@ -26,7 +26,7 @@ def parse_args() -> argparse.Namespace:
 
 def main(output_dir: str | Path = "outputs") -> None:
     output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
+    clean_analysis_outputs(output_dir)
 
     series_config = load_series_config()
     bundles = [load_price_series(item.output, item.name) for item in series_config]

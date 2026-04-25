@@ -63,7 +63,7 @@ Despues ejecuta:
 python scripts/run_pipeline.py
 ```
 
-El pipeline descargara los nuevos datos, validara los CSV, ejecutara el analisis y generara resultados en `outputs/`.
+El pipeline descargara los nuevos datos, validara los CSV, ejecutara el analisis y generara resultados en `outputs/`. Antes de escribir una nueva corrida, el analisis limpia los CSV y el reporte anterior dentro de `outputs/` para evitar mezclar resultados de tickers viejos con los nuevos.
 
 Archivos esperados para este ejemplo:
 
