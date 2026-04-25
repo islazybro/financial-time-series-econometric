@@ -81,6 +81,14 @@ Coloca tus archivos en `data/raw/` con los nombres:
 
 El codigo acepta columnas con nombres como `Fecha`, `Date`, `Cierre`, `Close`, `Adj Close` o `Precio`.
 
+Antes de ejecutar el analisis con datos reales, valida los archivos:
+
+```bash
+python scripts/validate_data.py
+```
+
+La guia completa de datos esta en `docs/data-step.md`.
+
 Si todavia no tienes datos, puedes generar un ejemplo reproducible:
 
 ```bash

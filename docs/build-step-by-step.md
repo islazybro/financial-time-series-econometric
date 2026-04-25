@@ -55,6 +55,16 @@ Columnas aceptadas:
 
 Estado: pendiente de conectar los CSV reales.
 
+Guia detallada:
+
+- `docs/data-step.md`
+
+Comando de validacion:
+
+```bash
+python scripts/validate_data.py
+```
+
 ## Paso 4. Analisis univariado
 
 Objetivo: estudiar cada activo por separado.
