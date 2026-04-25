@@ -10,6 +10,7 @@ __pycache__/
 pytest_tmp/
 pytest_tmp_*/
 outputs/
+outputs_*/
 
 # Datos reales: se recomienda no versionarlos
 data/raw/*.csv

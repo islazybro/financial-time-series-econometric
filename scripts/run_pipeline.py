@@ -20,6 +20,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Ejecuta el analisis sin regenerar graficas.",
     )
+    parser.add_argument(
+        "--output-dir",
+        default="outputs",
+        help="Carpeta donde se guardan reportes y CSV generados por el analisis.",
+    )
     return parser.parse_args()
 
 
@@ -36,7 +41,7 @@ def main() -> None:
     validate_data.main()
 
     print("Paso 3/4: ejecutando analisis econometrico...")
-    run_analysis.main()
+    run_analysis.main(output_dir=args.output_dir)
 
     if args.skip_figures:
         print("Paso 4/4: generacion de figuras omitida.")

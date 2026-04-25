@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 import pandas as pd
@@ -12,9 +13,19 @@ from econometria_financiera.univariate import arima_forecast_frame, returns_comp
 from econometria_financiera.volatility import fit_garch, garch_forecast_frame
 
 
-def main() -> None:
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Ejecuta el analisis econometrico del proyecto.")
+    parser.add_argument(
+        "--output-dir",
+        default="outputs",
+        help="Carpeta donde se guardan reportes y CSV generados.",
+    )
+    return parser.parse_args()
+
+
+def main(output_dir: str | Path = "outputs") -> None:
     raw_dir = Path("data/raw")
-    output_dir = Path("outputs")
+    output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     bbva_bundle = load_price_series(raw_dir / "BBVA.csv", "BBVA")
@@ -64,8 +75,8 @@ def main() -> None:
     )
     write_report(output_dir / "analysis_report.md", report)
 
-    print("Analisis completado. Revisa la carpeta outputs/.")
+    print(f"Analisis completado. Revisa la carpeta {output_dir}/.")
 
 
 if __name__ == "__main__":
-    main()
+    main(parse_args().output_dir)
