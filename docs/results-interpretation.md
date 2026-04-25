@@ -120,3 +120,5 @@ El analisis muestra un patron comun en series financieras:
 - choques con efectos transitorios.
 
 En conjunto, el proyecto muestra un flujo econometrico completo: preparacion de datos, pruebas de estacionariedad, modelado ARIMA, estimacion GARCH, modelo VAR, causalidad de Granger e impulso-respuesta. La version final con `BBVA.MC` y `SAN.MC` es metodologicamente mas consistente porque compara dos bancos del mismo mercado bursatil.
+
+Para una lectura responsable del alcance del proyecto, consulta `docs/limitations.md`.

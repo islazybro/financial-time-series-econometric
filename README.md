@@ -136,6 +136,7 @@ Los resultados tecnicos se guardan en `outputs/`. Las graficas versionables se g
 - [Seleccion de mercado y tickers](docs/market-selection.md)
 - [Metodologia](docs/methodology.md)
 - [Interpretacion de resultados](docs/results-interpretation.md)
+- [Limitaciones y alcance](docs/limitations.md)
 - [Texto para CV y LinkedIn](docs/cv-project-entry.md)
 
 ## Tecnologias
@@ -151,3 +152,7 @@ Los resultados tecnicos se guardan en `outputs/`. Las graficas versionables se g
 ## Valor Para Portafolio
 
 Este repositorio muestra capacidad para transformar un trabajo academico en un proyecto reproducible de analisis de datos: estructura modular, descarga automatizada, validacion de datos, modelado econometrico, visualizacion, interpretacion y documentacion clara.
+
+## Licencia
+
+Este proyecto se publica bajo licencia MIT. Consulta [LICENSE](LICENSE).
