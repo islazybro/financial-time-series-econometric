@@ -1,5 +1,7 @@
 # Financial Time Series Econometrics in Python
 
+[![Tests](https://github.com/islazybro/financial-time-series-econometric/actions/workflows/tests.yml/badge.svg)](https://github.com/islazybro/financial-time-series-econometric/actions/workflows/tests.yml)
+
 Proyecto de econometria financiera en Python para analizar las acciones de **BBVA** y **Banco Santander** en el mercado espanol mediante pruebas de estacionariedad, modelos ARIMA, volatilidad GARCH y modelos VAR.
 
 El proyecto original fue desarrollado en R como trabajo academico. Esta version lo reconstruye desde cero con una estructura reproducible, documentacion tecnica y una narrativa pensada para GitHub y portafolio profesional.

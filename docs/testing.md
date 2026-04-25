@@ -14,6 +14,23 @@ pip install -e ".[dev]"
 pytest
 ```
 
+## GitHub Actions
+
+El repositorio incluye un workflow en:
+
+```text
+.github/workflows/tests.yml
+```
+
+Cada `push` y cada `pull request` ejecuta:
+
+```bash
+python -m pip install -e ".[dev]"
+pytest
+```
+
+Si las pruebas pasan, GitHub muestra el estado correcto en la pestana `Actions` y en el badge del README.
+
 ## Que cubren las pruebas
 
 - Lectura de CSV con columnas en espanol.
