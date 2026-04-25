@@ -20,6 +20,8 @@ def validate_series(name: str, path: Path) -> list[str]:
     if not path.exists():
         return [f"{name}: no existe el archivo {path}"]
 
+    raw_rows = len(pd.read_csv(path))
+
     try:
         bundle = load_price_series(path, name)
     except Exception as exc:
@@ -27,6 +29,13 @@ def validate_series(name: str, path: Path) -> list[str]:
 
     prices = bundle.prices.dropna()
     returns = bundle.returns.dropna()
+    dropped_rows = raw_rows - len(prices)
+
+    if dropped_rows > 0:
+        issues.append(
+            f"{name}: se descartaron {dropped_rows} filas al limpiar. "
+            "Revisa encabezados, fechas vacias o precios no numericos."
+        )
 
     if len(prices) < 36:
         issues.append(f"{name}: tiene {len(prices)} observaciones; se recomiendan al menos 36.")

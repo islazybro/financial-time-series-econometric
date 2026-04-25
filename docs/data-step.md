@@ -48,6 +48,8 @@ pip install -e .
 
 Si la descarga no devuelve datos, revisa el ticker en Yahoo Finance y actualiza `config/data_sources.json`.
 
+Si el validador indica que se descartaron filas, vuelve a ejecutar la descarga. Esto puede pasar si el archivo quedo con encabezados extra o filas no numericas.
+
 ## Formato esperado
 
 El formato minimo es:

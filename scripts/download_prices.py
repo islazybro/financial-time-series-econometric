@@ -14,6 +14,10 @@ def normalize_prices(frame: pd.DataFrame) -> pd.DataFrame:
     if frame.empty:
         raise ValueError("la descarga no devolvio observaciones")
 
+    if isinstance(frame.columns, pd.MultiIndex):
+        frame = frame.copy()
+        frame.columns = frame.columns.get_level_values(0)
+
     price_column = "Adj Close" if "Adj Close" in frame.columns else "Close"
     prices = (
         frame.reset_index()[["Date", price_column]]
