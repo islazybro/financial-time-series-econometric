@@ -1,32 +1,38 @@
-# Interpretacion inicial de resultados
+# Interpretacion de resultados
 
-Este documento resume la primera lectura econometrica del analisis generado por `scripts/run_analysis.py`.
-
-> Nota: esta interpretacion corresponde a la ejecucion anterior con `BBVA.MX` y `SAN.MC`. El proyecto ya fue ajustado para usar `BBVA.MC` y `SAN.MC`; por lo tanto, este documento debe actualizarse despues de volver a descargar datos y correr el analisis.
+Este documento resume la lectura econometrica del analisis generado por `scripts/run_analysis.py` usando los tickers finales del proyecto.
 
 ## Datos analizados
 
-La ejecucion actual usa precios mensuales descargados desde Yahoo Finance segun `config/data_sources.json`.
+La ejecucion usa precios mensuales descargados desde Yahoo Finance segun `config/data_sources.json`.
 
-Configuracion de la ejecucion interpretada:
+Configuracion:
 
-- BBVA: `BBVA.MX`
+- BBVA: `BBVA.MC`
 - Santander: `SAN.MC`
+- mercado: Espana
+- moneda: euros
 - periodo: 2019-01-01 a 2026-01-01
 - frecuencia: mensual
+- observaciones validas: 84 por serie
 
-Antes de cerrar conclusiones, conviene regenerar resultados con la configuracion actual documentada en `docs/market-selection.md`.
+Esta seleccion mejora la comparabilidad porque ambas acciones pertenecen al mismo sector, mercado y moneda.
 
 ## Estacionariedad
 
-La prueba ADF en niveles arroja p-valores cercanos a 1.0000 para ambas series. Esto indica que no se rechaza la hipotesis nula de raiz unitaria, por lo que los precios en niveles no parecen estacionarios.
+La prueba ADF en niveles arroja p-valores de 1.0000 para ambas series. Esto indica que no se rechaza la hipotesis nula de raiz unitaria, por lo que los precios en niveles no parecen estacionarios.
 
-En cambio, los rendimientos logaritmicos tienen p-valores practicamente iguales a cero. Esto sugiere que los rendimientos si son estacionarios y que son una transformacion adecuada para modelos de volatilidad y VAR.
+En rendimientos logaritmicos, los p-valores son practicamente cero:
+
+- BBVA: 0.0000
+- Santander: 0.0000
+
+Esto sugiere que los rendimientos son estacionarios y que son una transformacion adecuada para analizar volatilidad e interacciones dinamicas.
 
 Lectura economica:
 
-- Los precios financieros suelen moverse con tendencias y choques persistentes.
-- Los rendimientos suelen tener media mas estable, por eso son preferibles para modelar relaciones dinamicas.
+- Los precios de acciones suelen tener tendencias y choques persistentes.
+- Los rendimientos eliminan gran parte de esa tendencia y permiten trabajar con series mas estables.
 
 ## Modelo ARIMA
 
@@ -36,76 +42,81 @@ El modelo seleccionado por AIC para ambas series fue:
 ARIMA(0, 2, 1)
 ```
 
-Esto sugiere que, dentro de la grilla probada, la dinamica de la media se describe mejor con una serie integrada de segundo orden y un componente de media movil.
+Resultados principales:
 
-Lectura para el proyecto:
+- BBVA AIC: 135.9905
+- Santander AIC: 44.9736
 
-- El resultado confirma que trabajar directamente con precios requiere diferenciar.
-- La seleccion por AIC favorece una especificacion relativamente parsimoniosa.
-- Para una version final, puede compararse este resultado con un modelo sobre log-precios o rendimientos.
+Este resultado refuerza la idea de que los precios en niveles requieren diferenciacion para modelar su media. La especificacion seleccionada es relativamente parsimoniosa dentro de la grilla probada.
 
 ## Heterocedasticidad y GARCH
 
-Los p-valores ARCH-LM fueron mayores a 0.05:
+Los p-valores de la prueba ARCH-LM fueron:
 
-- BBVA: 0.3285
+- BBVA: 0.2040
 - Santander: 0.3945
 
-Con esta evidencia no se rechaza la hipotesis de ausencia de efectos ARCH remanentes en los residuos del ARIMA.
+Como ambos valores son mayores a 0.05, no se encuentra evidencia fuerte de heterocedasticidad condicional remanente en los residuos del ARIMA.
 
-El modelo GARCH(1,1) muestra parametros beta cercanos a 1:
+El modelo GARCH(1,1) muestra alta persistencia en la volatilidad:
 
-- BBVA beta(1): 0.9924
+- BBVA beta(1): 0.9888
 - Santander beta(1): 0.9881
 
 Lectura economica:
 
-- La volatilidad estimada muestra alta persistencia.
-- Los choques de volatilidad tienden a disiparse lentamente.
-- Aun asi, la prueba ARCH-LM no muestra evidencia fuerte de heterocedasticidad remanente bajo esta especificacion.
+- La volatilidad estimada es persistente.
+- Los choques de volatilidad se reducen gradualmente.
+- Los pronosticos de varianza muestran una trayectoria descendente durante los diez periodos proyectados.
 
 ## Modelo VAR
 
-El VAR selecciono un rezago:
+El modelo VAR selecciono un rezago:
 
 ```text
 VAR(1)
 ```
 
-Los pronosticos de rendimientos convergen hacia valores relativamente estables. Esto es consistente con series de rendimientos estacionarias, donde el modelo no proyecta tendencias explosivas.
+Resultados:
+
+- AIC: -10.7840
+- BIC: -10.6079
+
+Los pronosticos de rendimientos convergen hacia valores relativamente estables, lo cual es consistente con el uso de rendimientos estacionarios.
 
 ## Causalidad de Granger
 
 Los p-valores de causalidad de Granger fueron:
 
-- BBVA -> Santander: 0.7197
-- Santander -> BBVA: 0.6271
+- BBVA -> Santander: 0.1944
+- Santander -> BBVA: 0.5660
 
 Como ambos p-valores son mayores a 0.05, no se encuentra evidencia estadistica de causalidad de Granger entre las series.
 
 Interpretacion correcta:
 
-- No significa que las empresas no esten relacionadas.
-- Significa que, con estos datos, frecuencia y rezagos, los valores pasados de una serie no agregan informacion predictiva estadisticamente significativa sobre la otra.
+- No significa que BBVA y Santander no esten relacionadas como empresas o activos financieros.
+- Significa que, bajo esta frecuencia mensual y con el VAR estimado, los rezagos de una serie no aportan informacion predictiva estadisticamente significativa sobre la otra.
 
 ## Impulso-respuesta
 
-Las funciones impulso-respuesta muestran efectos que se reducen rapidamente hacia cero. Esto sugiere que los choques tienen impacto transitorio dentro del sistema VAR.
+Las funciones impulso-respuesta muestran efectos iniciales que se reducen rapidamente hacia cero. Esto indica que los choques tienen efectos transitorios dentro del sistema VAR.
 
 Lectura economica:
 
-- El sistema parece estable.
+- El sistema estimado parece estable.
 - Los choques no generan efectos persistentes de largo plazo en los rendimientos.
-- La interaccion dinamica existe en magnitud pequena, pero no alcanza evidencia fuerte mediante Granger.
+- La interaccion dinamica existe en magnitud limitada, pero no se traduce en causalidad de Granger significativa.
 
-## Conclusion preliminar
+## Conclusion
 
 El analisis muestra un patron comun en series financieras:
 
 - precios no estacionarios;
 - rendimientos estacionarios;
+- necesidad de transformar las series antes de modelar;
 - volatilidad persistente;
 - ausencia de causalidad de Granger significativa;
 - choques con efectos transitorios.
 
-Para fortalecer el proyecto final, la configuracion fue ajustada a `BBVA.MC` y `SAN.MC`. El siguiente paso es regenerar resultados con esos tickers y actualizar esta interpretacion con la nueva salida.
+En conjunto, el proyecto muestra un flujo econometrico completo: preparacion de datos, pruebas de estacionariedad, modelado ARIMA, estimacion GARCH, modelo VAR, causalidad de Granger e impulso-respuesta. La version final con `BBVA.MC` y `SAN.MC` es metodologicamente mas consistente porque compara dos bancos del mismo mercado bursatil.
