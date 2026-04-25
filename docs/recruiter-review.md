@@ -18,6 +18,7 @@ Este documento resume por que el repositorio funciona como pieza de portafolio.
 - Limpieza y validacion de datos financieros.
 - Series de tiempo y econometria aplicada.
 - Modelos ARIMA, GARCH y VAR.
+- Diagnostico de residuos, pronosticos y comparacion de retornos.
 - Comunicacion tecnica mediante documentacion.
 - Uso de Git, GitHub y GitHub Actions.
 - Pruebas basicas con `pytest`.
@@ -33,5 +34,6 @@ Una forma breve de explicarlo:
 - No solo migre codigo: rediseñe la estructura del proyecto.
 - Separe logica reutilizable, scripts ejecutables y documentacion.
 - Agregue validacion de datos antes del modelado.
+- Complete el flujo ARIMA con diagnostico de residuos y pronosticos.
 - Documente limitaciones para evitar conclusiones exageradas.
 - Automatice pruebas con GitHub Actions.

@@ -28,6 +28,7 @@ Preguntas principales:
 - Los precios en niveles no son estacionarios segun ADF.
 - Los rendimientos logaritmicos son estacionarios.
 - El modelo seleccionado por AIC para ambas series fue `ARIMA(0, 2, 1)`.
+- Los diagnosticos ARIMA incorporan Ljung-Box y ACF de residuos.
 - El modelo `GARCH(1,1)` muestra alta persistencia en la volatilidad.
 - El `VAR(1)` no encuentra evidencia significativa de causalidad de Granger entre BBVA y Santander.
 - Las funciones impulso-respuesta sugieren que los choques tienen efectos transitorios.
@@ -43,6 +44,18 @@ La interpretacion completa esta en [docs/results-interpretation.md](docs/results
 ### Rendimientos logaritmicos
 
 ![Rendimientos logaritmicos](docs/figures/log_returns.png)
+
+### Comparativo de retornos
+
+![Comparativo de retornos](docs/figures/returns_comparison.png)
+
+### Diagnostico ARIMA
+
+![ACF de residuos ARIMA](docs/figures/arima_residual_acf.png)
+
+### Pronostico ARIMA
+
+![Pronostico ARIMA](docs/figures/arima_forecast.png)
 
 ### Pronostico de varianza GARCH
 
@@ -64,11 +77,12 @@ El flujo del proyecto es:
 2. Validacion y limpieza de datos.
 3. Calculo de rendimientos logaritmicos.
 4. Pruebas ADF de raiz unitaria.
-5. Seleccion ARIMA por AIC.
-6. Pruebas ARCH y estimacion GARCH.
-7. Estimacion VAR sobre rendimientos.
-8. Causalidad de Granger, pronostico e impulso-respuesta.
-9. Generacion de reporte y visualizaciones.
+5. Seleccion, diagnostico y pronostico ARIMA.
+6. Comparativo de retornos.
+7. Pruebas ARCH y estimacion GARCH.
+8. Estimacion VAR sobre rendimientos.
+9. Causalidad de Granger, pronostico e impulso-respuesta.
+10. Generacion de reporte y visualizaciones.
 
 La explicacion metodologica esta en [docs/methodology.md](docs/methodology.md).
 

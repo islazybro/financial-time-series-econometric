@@ -7,8 +7,9 @@ from itertools import product
 import numpy as np
 import pandas as pd
 from statsmodels.tools.sm_exceptions import ConvergenceWarning
-from statsmodels.stats.diagnostic import het_arch
+from statsmodels.stats.diagnostic import acorr_ljungbox, het_arch
 from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.stattools import acf
 from statsmodels.tsa.stattools import adfuller
 
 
@@ -38,6 +39,7 @@ class UnivariateSummary:
     selected_arima: str
     arima_aic: float
     arch_test_pvalue: float
+    ljung_box_pvalue: float
 
 
 def adf_test(series: pd.Series, maxlag: int | None = None) -> ADFResult:
@@ -87,11 +89,58 @@ def arch_lm_test(residuals: pd.Series, nlags: int = 5) -> dict[str, float]:
     }
 
 
+def ljung_box_test(residuals: pd.Series, lag: int = 10) -> dict[str, float]:
+    result = acorr_ljungbox(residuals.dropna(), lags=[lag], return_df=True)
+    row = result.iloc[0]
+    return {
+        "lag": float(lag),
+        "lb_stat": float(row["lb_stat"]),
+        "lb_pvalue": float(row["lb_pvalue"]),
+    }
+
+
+def residual_acf_frame(residuals: pd.Series, nlags: int = 20) -> pd.DataFrame:
+    values = acf(residuals.dropna(), nlags=nlags, fft=False)
+    return pd.DataFrame({"lag": range(len(values)), "acf": values})
+
+
+def arima_forecast_frame(fitted_model, steps: int = 10) -> pd.DataFrame:
+    forecast = fitted_model.get_forecast(steps=steps)
+    summary = forecast.summary_frame(alpha=0.05).reset_index(drop=True)
+    return pd.DataFrame(
+        {
+            "step": range(1, steps + 1),
+            "mean": summary["mean"],
+            "mean_ci_lower": summary["mean_ci_lower"],
+            "mean_ci_upper": summary["mean_ci_upper"],
+        }
+    )
+
+
+def returns_comparison_frame(returns_df: pd.DataFrame) -> pd.DataFrame:
+    rows = []
+    for column in returns_df.columns:
+        series = returns_df[column].dropna()
+        rows.append(
+            {
+                "series": column,
+                "mean_return": float(series.mean()),
+                "volatility": float(series.std()),
+                "min_return": float(series.min()),
+                "max_return": float(series.max()),
+                "observations": int(series.count()),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def summarize_univariate(series_name: str, level_series: pd.Series, return_series: pd.Series) -> tuple[UnivariateSummary, dict[str, object]]:
     adf_level = adf_test(level_series)
     adf_return = adf_test(return_series)
     arima_selection, arima_model = select_arima(level_series)
-    arch_result = arch_lm_test(pd.Series(arima_model.resid))
+    residuals = pd.Series(arima_model.resid)
+    arch_result = arch_lm_test(residuals)
+    ljung_box_result = ljung_box_test(residuals)
 
     summary = UnivariateSummary(
         series=series_name,
@@ -100,6 +149,7 @@ def summarize_univariate(series_name: str, level_series: pd.Series, return_serie
         selected_arima=str(arima_selection.order),
         arima_aic=arima_selection.aic,
         arch_test_pvalue=arch_result["lm_pvalue"],
+        ljung_box_pvalue=ljung_box_result["lb_pvalue"],
     )
 
     details = {
@@ -107,6 +157,7 @@ def summarize_univariate(series_name: str, level_series: pd.Series, return_serie
         "adf_return": asdict(adf_return),
         "arima_selection": asdict(arima_selection),
         "arch_lm": arch_result,
+        "ljung_box": ljung_box_result,
         "arima_model": arima_model,
     }
     return summary, details

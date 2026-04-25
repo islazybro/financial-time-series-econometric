@@ -80,6 +80,9 @@ Componentes:
 - prueba ADF en niveles;
 - prueba ADF en rendimientos;
 - seleccion ARIMA por AIC;
+- ACF de residuos;
+- prueba Ljung-Box;
+- pronostico ARIMA;
 - prueba ARCH sobre residuos.
 
 Archivo principal:

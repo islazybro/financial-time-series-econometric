@@ -34,7 +34,28 @@ ARIMA modela la dinamica de la media mediante componentes:
 
 En este proyecto se prueba una pequena grilla de modelos y se selecciona el de menor AIC entre los candidatos estables y estimables.
 
-## 5. Efectos ARCH y modelo GARCH
+Despues de seleccionar el modelo, se revisan los residuos mediante:
+
+- ACF de residuos;
+- prueba Ljung-Box.
+
+La idea es verificar si queda autocorrelacion sistematica sin modelar. Si los residuos se aproximan a ruido blanco, el modelo captura mejor la dinamica de la media.
+
+Tambien se genera un pronostico ARIMA univariado para cada serie.
+
+## 5. Comparativo de retornos
+
+Se comparan los rendimientos logaritmicos de BBVA y Santander mediante estadisticos descriptivos:
+
+- media;
+- volatilidad;
+- minimo;
+- maximo;
+- correlacion.
+
+Este bloque ayuda a interpretar diferencias de rendimiento y riesgo entre ambas series antes del modelo VAR.
+
+## 6. Efectos ARCH y modelo GARCH
 
 Las series financieras suelen mostrar volatilidad agrupada. Para evaluar esto:
 
@@ -48,7 +69,7 @@ La ecuacion de volatilidad tiene la forma:
 sigma_t^2 = omega + alpha * e_{t-1}^2 + beta * sigma_{t-1}^2
 ```
 
-## 6. Modelo VAR
+## 7. Modelo VAR
 
 Sobre los rendimientos de ambas acciones se estima un VAR para capturar interdependencia dinamica. A partir de este modelo se obtienen:
 
@@ -57,7 +78,7 @@ Sobre los rendimientos de ambas acciones se estima un VAR para capturar interdep
 - pruebas de causalidad de Granger,
 - funciones impulso-respuesta.
 
-## 7. Interpretacion
+## 8. Interpretacion
 
 La meta no es solo obtener salidas del software, sino traducirlas a lenguaje economico:
 

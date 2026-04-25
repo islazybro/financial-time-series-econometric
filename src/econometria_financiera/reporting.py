@@ -25,6 +25,7 @@ Este reporte resume un pipeline econometrico en Python para las acciones de BBVA
 - p-valor ADF en rendimientos: {bbva.adf_return_pvalue:.4f}
 - ARIMA seleccionado: {bbva.selected_arima}
 - AIC del ARIMA: {bbva.arima_aic:.4f}
+- p-valor Ljung-Box residuos ARIMA: {bbva.ljung_box_pvalue:.4f}
 - p-valor ARCH-LM: {bbva.arch_test_pvalue:.4f}
 
 ### Santander
@@ -33,6 +34,7 @@ Este reporte resume un pipeline econometrico en Python para las acciones de BBVA
 - p-valor ADF en rendimientos: {san.adf_return_pvalue:.4f}
 - ARIMA seleccionado: {san.selected_arima}
 - AIC del ARIMA: {san.arima_aic:.4f}
+- p-valor Ljung-Box residuos ARIMA: {san.ljung_box_pvalue:.4f}
 - p-valor ARCH-LM: {san.arch_test_pvalue:.4f}
 
 ## Resultados GARCH(1,1)

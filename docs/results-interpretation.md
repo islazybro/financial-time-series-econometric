@@ -49,6 +49,44 @@ Resultados principales:
 
 Este resultado refuerza la idea de que los precios en niveles requieren diferenciacion para modelar su media. La especificacion seleccionada es relativamente parsimoniosa dentro de la grilla probada.
 
+## Diagnostico y pronostico ARIMA
+
+El diagnostico ARIMA incorpora ACF de residuos y prueba Ljung-Box para evaluar si queda autocorrelacion sistematica sin modelar.
+
+Los p-valores Ljung-Box fueron:
+
+- BBVA: 0.8602
+- Santander: 0.5580
+
+Como ambos p-valores son mayores a 0.05, no se rechaza la hipotesis de ausencia de autocorrelacion conjunta en los residuos. Esto sugiere que los modelos ARIMA capturan de forma razonable la dinamica de la media.
+
+El pronostico ARIMA permite completar el ciclo de seleccion, estimacion, diagnostico y prediccion.
+
+Los resultados se guardan en:
+
+- `outputs/bbva_arima_forecast.csv`
+- `outputs/san_arima_forecast.csv`
+- `docs/figures/arima_residual_acf.png`
+- `docs/figures/arima_forecast.png`
+
+## Comparativo de retornos
+
+El proyecto incorpora una comparacion descriptiva de rendimientos logaritmicos para estudiar rendimiento promedio, volatilidad, valores extremos y correlacion.
+
+Este bloque ayuda a interpretar el perfil riesgo-rendimiento antes de estimar el VAR. Tambien sirve como puente entre el analisis univariado y el analisis conjunto de ambas series.
+
+Resultados principales:
+
+- BBVA tuvo mayor rendimiento promedio mensual: 0.0211 frente a 0.0140 de Santander.
+- BBVA tambien mostro volatilidad ligeramente mayor: 0.1044 frente a 0.1010 de Santander.
+- Ambas series presentaron episodios de caidas fuertes, consistentes con la naturaleza volatil de activos financieros.
+
+Los resultados se guardan en:
+
+- `outputs/returns_comparison.csv`
+- `outputs/returns_correlation.csv`
+- `docs/figures/returns_comparison.png`
+
 ## Heterocedasticidad y GARCH
 
 Los p-valores de la prueba ARCH-LM fueron:

@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 
 from econometria_financiera.data import combine_returns, load_price_series
+from econometria_financiera.univariate import returns_comparison_frame
 
 
 def test_load_price_series_standardizes_columns_and_returns(tmp_path):
@@ -61,3 +62,18 @@ def test_combine_returns_aligns_dates(tmp_path):
 
     assert list(combined.columns) == ["First", "Second"]
     assert len(combined) == 2
+
+
+def test_returns_comparison_frame_summarizes_each_series():
+    returns = pd.DataFrame(
+        {
+            "First": [0.01, 0.02, -0.01],
+            "Second": [0.03, -0.02, 0.01],
+        }
+    )
+
+    summary = returns_comparison_frame(returns)
+
+    assert list(summary["series"]) == ["First", "Second"]
+    assert list(summary["observations"]) == [3, 3]
+    assert "volatility" in summary.columns
