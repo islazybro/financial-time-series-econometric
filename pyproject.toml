@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "econometria-financiera"
+version = "0.1.0"
+description = "Pipeline reproducible de series de tiempo financieras en Python para BBVA y Santander."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "arch>=7.0.0",
+    "matplotlib>=3.8.0",
+    "numpy>=1.26.0",
+    "pandas>=2.2.0",
+    "statsmodels>=0.14.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

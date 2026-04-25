@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+outputs/
+
+# Datos reales: se recomienda no versionarlos
+data/raw/*.csv
+!data/raw/*.csv.example
+
+# Archivos locales de entorno
+.python-version
