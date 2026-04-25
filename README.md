@@ -84,6 +84,8 @@ El flujo del proyecto es:
 9. Causalidad de Granger, pronostico e impulso-respuesta.
 10. Generacion de reporte y visualizaciones.
 
+Los activos analizados se configuran en `config/data_sources.json`, por lo que el pipeline puede reutilizarse con otros dos tickers comparables sin modificar los scripts principales.
+
 La explicacion metodologica esta en [docs/methodology.md](docs/methodology.md).
 
 ## Estructura
@@ -157,6 +159,8 @@ python scripts/generate_figures.py
 ```
 
 Los resultados tecnicos se guardan en `outputs/`. Las graficas versionables se guardan en `docs/figures/`.
+
+Los pronosticos univariados usan nombres derivados del ticker configurado, por ejemplo `bbva_mc_arima_forecast.csv` y `san_mc_garch_forecast.csv`.
 
 Ejecutar pruebas:
 

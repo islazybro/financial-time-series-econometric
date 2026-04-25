@@ -9,6 +9,7 @@ Este documento resume por que el repositorio funciona como pieza de portafolio.
 - Visualizaciones integradas directamente en la portada.
 - Estructura profesional con `src/`, `scripts/`, `docs/`, `tests/` y `config/`.
 - Pipeline reproducible con un solo comando.
+- Configuracion reutilizable de tickers desde `config/data_sources.json`.
 - Documentacion sobre datos, metodologia, resultados y limitaciones.
 - Licencia MIT.
 
@@ -37,3 +38,4 @@ Una forma breve de explicarlo:
 - Complete el flujo ARIMA con diagnostico de residuos y pronosticos.
 - Documente limitaciones para evitar conclusiones exageradas.
 - Automatice pruebas con GitHub Actions.
+- Mejore el pipeline para que los archivos de salida univariados se generen dinamicamente segun los tickers configurados.

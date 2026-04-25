@@ -17,11 +17,21 @@ Este comando ejecuta:
 
 ## Ejecutar sin descargar
 
-Si ya existen `data/raw/BBVA.csv` y `data/raw/SAN.csv`, puedes usar:
+Si ya existen los CSV definidos en `config/data_sources.json`, puedes usar:
 
 ```bash
 python scripts/run_pipeline.py --skip-download
 ```
+
+## Cambiar acciones analizadas
+
+El pipeline lee las series desde `config/data_sources.json`. Para reutilizar el proyecto con otros dos activos, cambia `name`, `ticker` y `output` en ese archivo y vuelve a ejecutar:
+
+```bash
+python scripts/run_pipeline.py
+```
+
+La version actual esta disenada para comparar exactamente dos series. Los resultados univariados usan nombres dinamicos derivados del ticker, por ejemplo `aapl_arima_forecast.csv` o `msft_garch_forecast.csv`.
 
 ## Ejecutar sin figuras
 

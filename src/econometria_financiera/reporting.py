@@ -4,54 +4,57 @@ from pathlib import Path
 
 
 def build_markdown_report(context: dict) -> str:
-    bbva = context["bbva"]
-    san = context["san"]
-    bbva_garch = context["bbva_garch"]
-    san_garch = context["san_garch"]
+    series = context["series"]
+    univariate = context["univariate"]
+    garch = context["garch"]
     var_summary = context["var_summary"]
     granger = context["granger"]
+
+    series_names = " y ".join(item.name for item in series)
+    univariate_sections = []
+    for summary in univariate:
+        univariate_sections.append(
+            f"""### {summary.series}
+
+- p-valor ADF en niveles: {summary.adf_level_pvalue:.4f}
+- p-valor ADF en rendimientos: {summary.adf_return_pvalue:.4f}
+- ARIMA seleccionado: {summary.selected_arima}
+- AIC del ARIMA: {summary.arima_aic:.4f}
+- p-valor Ljung-Box residuos ARIMA: {summary.ljung_box_pvalue:.4f}
+- p-valor ARCH-LM: {summary.arch_test_pvalue:.4f}
+"""
+        )
+
+    garch_sections = []
+    for config, summary in zip(series, garch):
+        garch_sections.append(
+            f"""### {config.name}
+
+- omega: {summary.omega:.6f}
+- alpha(1): {summary.alpha_1:.6f}
+- beta(1): {summary.beta_1:.6f}
+- AIC: {summary.aic:.4f}
+"""
+        )
+
+    granger_lines = []
+    for relation, result in granger.items():
+        readable_relation = relation.replace("_to_", " -> ")
+        granger_lines.append(f"- {readable_relation}: p-valor = {result['pvalue']:.4f}")
 
     return f"""# Reporte de Analisis
 
 ## Resumen ejecutivo
 
-Este reporte resume un pipeline econometrico en Python para las acciones de BBVA y Santander. El objetivo es evaluar estacionariedad, dinamica de la media, volatilidad condicional e interdependencia entre ambas series.
+Este reporte resume un pipeline econometrico en Python para las series {series_names}. El objetivo es evaluar estacionariedad, dinamica de la media, volatilidad condicional e interdependencia entre ambas series.
 
 ## Resultados univariados
 
-### BBVA
-
-- p-valor ADF en niveles: {bbva.adf_level_pvalue:.4f}
-- p-valor ADF en rendimientos: {bbva.adf_return_pvalue:.4f}
-- ARIMA seleccionado: {bbva.selected_arima}
-- AIC del ARIMA: {bbva.arima_aic:.4f}
-- p-valor Ljung-Box residuos ARIMA: {bbva.ljung_box_pvalue:.4f}
-- p-valor ARCH-LM: {bbva.arch_test_pvalue:.4f}
-
-### Santander
-
-- p-valor ADF en niveles: {san.adf_level_pvalue:.4f}
-- p-valor ADF en rendimientos: {san.adf_return_pvalue:.4f}
-- ARIMA seleccionado: {san.selected_arima}
-- AIC del ARIMA: {san.arima_aic:.4f}
-- p-valor Ljung-Box residuos ARIMA: {san.ljung_box_pvalue:.4f}
-- p-valor ARCH-LM: {san.arch_test_pvalue:.4f}
+{chr(10).join(univariate_sections)}
 
 ## Resultados GARCH(1,1)
 
-### BBVA
-
-- omega: {bbva_garch.omega:.6f}
-- alpha(1): {bbva_garch.alpha_1:.6f}
-- beta(1): {bbva_garch.beta_1:.6f}
-- AIC: {bbva_garch.aic:.4f}
-
-### Santander
-
-- omega: {san_garch.omega:.6f}
-- alpha(1): {san_garch.alpha_1:.6f}
-- beta(1): {san_garch.beta_1:.6f}
-- AIC: {san_garch.aic:.4f}
+{chr(10).join(garch_sections)}
 
 ## Resultados VAR
 
@@ -61,8 +64,7 @@ Este reporte resume un pipeline econometrico en Python para las acciones de BBVA
 
 ## Causalidad de Granger
 
-- BBVA -> Santander: p-valor = {granger["bbva_to_san"]["pvalue"]:.4f}
-- Santander -> BBVA: p-valor = {granger["san_to_bbva"]["pvalue"]:.4f}
+{chr(10).join(granger_lines)}
 
 ## Lectura economica sugerida
 

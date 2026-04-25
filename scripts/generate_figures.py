@@ -11,11 +11,11 @@ import pandas as pd
 
 from econometria_financiera.data import combine_returns, load_price_series
 from econometria_financiera.multivariate import fit_var, impulse_response_table
+from econometria_financiera.project_config import load_series_config
 from econometria_financiera.univariate import arima_forecast_frame, residual_acf_frame, summarize_univariate
 from econometria_financiera.volatility import fit_garch, garch_forecast_frame
 
 
-RAW_DIR = Path("data/raw")
 FIGURE_DIR = Path("docs/figures")
 
 
@@ -26,10 +26,10 @@ def save_current_figure(path: Path) -> None:
     plt.close()
 
 
-def plot_prices(bbva, santander) -> None:
+def plot_prices(bundles, configs) -> None:
     plt.figure(figsize=(10, 5))
-    plt.plot(bbva.prices.index, bbva.prices, label="BBVA.MC", linewidth=2)
-    plt.plot(santander.prices.index, santander.prices, label="SAN.MC", linewidth=2)
+    for bundle, config in zip(bundles, configs):
+        plt.plot(bundle.prices.index, bundle.prices, label=config.label, linewidth=2)
     plt.title("Precios de cierre mensuales")
     plt.xlabel("Fecha")
     plt.ylabel("Precio ajustado")
@@ -38,10 +38,10 @@ def plot_prices(bbva, santander) -> None:
     save_current_figure(FIGURE_DIR / "price_series.png")
 
 
-def plot_returns(bbva, santander) -> None:
+def plot_returns(bundles, configs) -> None:
     plt.figure(figsize=(10, 5))
-    plt.plot(bbva.returns.index, bbva.returns, label="BBVA.MC", linewidth=1.8)
-    plt.plot(santander.returns.index, santander.returns, label="SAN.MC", linewidth=1.8)
+    for bundle, config in zip(bundles, configs):
+        plt.plot(bundle.returns.index, bundle.returns, label=config.label, linewidth=1.8)
     plt.axhline(0, color="black", linewidth=0.8)
     plt.title("Rendimientos logaritmicos mensuales")
     plt.xlabel("Fecha")
@@ -63,15 +63,14 @@ def plot_returns_comparison(returns_df: pd.DataFrame) -> None:
     save_current_figure(FIGURE_DIR / "returns_comparison.png")
 
 
-def plot_arima_diagnostics(bbva, santander) -> None:
-    _, bbva_details = summarize_univariate("BBVA", bbva.prices, bbva.returns)
-    _, santander_details = summarize_univariate("Santander", santander.prices, santander.returns)
-    diagnostics = {
-        "BBVA": residual_acf_frame(pd.Series(bbva_details["arima_model"].resid), nlags=20),
-        "Santander": residual_acf_frame(pd.Series(santander_details["arima_model"].resid), nlags=20),
-    }
+def plot_arima_diagnostics(bundles) -> None:
+    diagnostics = {}
+    for bundle in bundles:
+        _, details = summarize_univariate(bundle.name, bundle.prices, bundle.returns)
+        diagnostics[bundle.name] = residual_acf_frame(pd.Series(details["arima_model"].resid), nlags=20)
 
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4), sharey=True)
+    fig, axes = plt.subplots(1, len(diagnostics), figsize=(11, 4), sharey=True)
+    axes = axes.flatten() if hasattr(axes, "flatten") else [axes]
     for axis, (name, data) in zip(axes, diagnostics.items()):
         axis.bar(data["lag"], data["acf"], width=0.7)
         axis.axhline(0, color="black", linewidth=0.8)
@@ -82,15 +81,14 @@ def plot_arima_diagnostics(bbva, santander) -> None:
     save_current_figure(FIGURE_DIR / "arima_residual_acf.png")
 
 
-def plot_arima_forecast(bbva, santander) -> None:
-    _, bbva_details = summarize_univariate("BBVA", bbva.prices, bbva.returns)
-    _, santander_details = summarize_univariate("Santander", santander.prices, santander.returns)
-    forecasts = {
-        "BBVA": arima_forecast_frame(bbva_details["arima_model"], steps=10),
-        "Santander": arima_forecast_frame(santander_details["arima_model"], steps=10),
-    }
+def plot_arima_forecast(bundles) -> None:
+    forecasts = {}
+    for bundle in bundles:
+        _, details = summarize_univariate(bundle.name, bundle.prices, bundle.returns)
+        forecasts[bundle.name] = arima_forecast_frame(details["arima_model"], steps=10)
 
-    fig, axes = plt.subplots(1, 2, figsize=(11, 4))
+    fig, axes = plt.subplots(1, len(forecasts), figsize=(11, 4))
+    axes = axes.flatten() if hasattr(axes, "flatten") else [axes]
     for axis, (name, forecast) in zip(axes, forecasts.items()):
         axis.plot(forecast["step"], forecast["mean"], marker="o", label="Pronostico")
         axis.fill_between(
@@ -108,15 +106,12 @@ def plot_arima_forecast(bbva, santander) -> None:
     save_current_figure(FIGURE_DIR / "arima_forecast.png")
 
 
-def plot_garch_forecast(bbva, santander) -> None:
-    _, bbva_garch = fit_garch(bbva.returns)
-    _, santander_garch = fit_garch(santander.returns)
-    bbva_forecast = garch_forecast_frame(bbva_garch, horizon=10)
-    santander_forecast = garch_forecast_frame(santander_garch, horizon=10)
-
+def plot_garch_forecast(bundles, configs) -> None:
     plt.figure(figsize=(9, 5))
-    plt.plot(bbva_forecast["step"], bbva_forecast["variance_forecast"], marker="o", label="BBVA.MC")
-    plt.plot(santander_forecast["step"], santander_forecast["variance_forecast"], marker="o", label="SAN.MC")
+    for bundle, config in zip(bundles, configs):
+        _, garch = fit_garch(bundle.returns)
+        forecast = garch_forecast_frame(garch, horizon=10)
+        plt.plot(forecast["step"], forecast["variance_forecast"], marker="o", label=config.label)
     plt.title("Pronostico de varianza GARCH(1,1)")
     plt.xlabel("Horizonte")
     plt.ylabel("Varianza condicional pronosticada")
@@ -163,17 +158,17 @@ def plot_impulse_response(var_model) -> None:
 
 
 def main() -> None:
-    bbva = load_price_series(RAW_DIR / "BBVA.csv", "BBVA")
-    santander = load_price_series(RAW_DIR / "SAN.csv", "Santander")
-    returns_df = combine_returns(bbva, santander)
+    series_config = load_series_config()
+    bundles = [load_price_series(item.output, item.name) for item in series_config]
+    returns_df = combine_returns(*bundles)
     _, var_model = fit_var(returns_df)
 
-    plot_prices(bbva, santander)
-    plot_returns(bbva, santander)
+    plot_prices(bundles, series_config)
+    plot_returns(bundles, series_config)
     plot_returns_comparison(returns_df)
-    plot_arima_diagnostics(bbva, santander)
-    plot_arima_forecast(bbva, santander)
-    plot_garch_forecast(bbva, santander)
+    plot_arima_diagnostics(bundles)
+    plot_arima_forecast(bundles)
+    plot_garch_forecast(bundles, series_config)
     plot_var_forecast(var_model)
     plot_impulse_response(var_model)
 
