@@ -10,14 +10,14 @@
 
 ## Version media para LinkedIn o portafolio
 
-Desarrolle una nueva version en Python de un proyecto de econometria financiera centrado en el analisis de las acciones de BBVA y Santander. El repositorio incluye limpieza de datos, pruebas Dickey-Fuller, seleccion de modelos ARIMA, estimacion de volatilidad con GARCH y analisis multivariado con VAR, causalidad de Granger e impulso-respuesta. La propuesta esta pensada como pieza de portafolio tecnico, con una estructura reproducible y documentacion clara para explicar tanto el codigo como la logica econometrica.
+Desarrolle una nueva version en Python de un proyecto de econometria financiera centrado en el analisis de las acciones de BBVA y Santander en el mercado espanol. El repositorio incluye descarga reproducible de datos, limpieza y validacion, pruebas Dickey-Fuller, seleccion de modelos ARIMA, estimacion de volatilidad con GARCH y analisis multivariado con VAR, causalidad de Granger e impulso-respuesta. La propuesta esta pensada como pieza de portafolio tecnico, con una estructura reproducible y documentacion clara para explicar tanto el codigo como la logica econometrica.
 
 ## Version corta en ingles
 
 **Financial Time Series Econometric Analysis | Python**
 
 - Rebuilt from scratch in Python an academic time series project originally developed in R.
-- Implemented stationarity testing, ARIMA modeling, ARCH/GARCH volatility analysis, and VAR-based dynamic interaction analysis for BBVA and Santander.
+- Implemented reproducible data download, validation, stationarity testing, ARIMA modeling, ARCH/GARCH volatility analysis, and VAR-based dynamic interaction analysis for BBVA and Santander.
 - Organized the work as a reproducible GitHub repository with clear documentation and economic interpretation.
 
 ## Tecnologias a destacar

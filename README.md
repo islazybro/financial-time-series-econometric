@@ -1,71 +1,97 @@
-# Proyecto Final de Econometria en Python
+# Financial Time Series Econometrics in Python
 
-Este repositorio rehace desde cero, en Python y con mejor estructura, un proyecto de series de tiempo financieras que originalmente fue desarrollado en R. El objetivo es que funcione tanto como evidencia tecnica para CV y GitHub como material de estudio para entender cada paso del analisis.
+Proyecto de econometria financiera en Python para analizar las acciones de **BBVA** y **Banco Santander** en el mercado espanol mediante pruebas de estacionariedad, modelos ARIMA, volatilidad GARCH y modelos VAR.
 
-## Pregunta de investigacion
+El proyecto original fue desarrollado en R como trabajo academico. Esta version lo reconstruye desde cero con una estructura reproducible, documentacion tecnica y una narrativa pensada para GitHub y portafolio profesional.
 
-Se estudian las series de precios de cierre de **BBVA** y **Banco Santander** para responder cuatro preguntas:
+## Resumen
 
-1. Las series son estacionarias en niveles o requieren transformacion.
-2. Que modelo describe mejor la dinamica de la media de cada serie.
-3. Existe evidencia de volatilidad condicional en los rendimientos.
-4. Hay interaccion dinamica entre ambas acciones mediante un modelo VAR.
+El analisis usa precios mensuales descargados desde Yahoo Finance:
+
+- BBVA: `BBVA.MC`
+- Santander: `SAN.MC`
+- Periodo: 2019-01-01 a 2026-01-01
+- Frecuencia: mensual
+- Observaciones validas: 84 por serie
+
+Preguntas principales:
+
+1. Los precios son estacionarios o requieren transformacion.
+2. Que modelo ARIMA describe la dinamica de la media.
+3. Existe persistencia en la volatilidad mediante GARCH.
+4. Hay relacion dinamica entre ambas series mediante VAR, Granger e impulso-respuesta.
+
+## Resultados Principales
+
+- Los precios en niveles no son estacionarios segun ADF.
+- Los rendimientos logaritmicos son estacionarios.
+- El modelo seleccionado por AIC para ambas series fue `ARIMA(0, 2, 1)`.
+- El modelo `GARCH(1,1)` muestra alta persistencia en la volatilidad.
+- El `VAR(1)` no encuentra evidencia significativa de causalidad de Granger entre BBVA y Santander.
+- Las funciones impulso-respuesta sugieren que los choques tienen efectos transitorios.
+
+La interpretacion completa esta en [docs/results-interpretation.md](docs/results-interpretation.md).
+
+## Visualizaciones
+
+### Precios de cierre
+
+![Precios de cierre](docs/figures/price_series.png)
+
+### Rendimientos logaritmicos
+
+![Rendimientos logaritmicos](docs/figures/log_returns.png)
+
+### Pronostico de varianza GARCH
+
+![Pronostico de varianza GARCH](docs/figures/garch_variance_forecast.png)
+
+### Pronostico VAR
+
+![Pronostico VAR](docs/figures/var_forecast.png)
+
+### Impulso-respuesta
+
+![Impulso-respuesta](docs/figures/impulse_response.png)
 
 ## Metodologia
 
-El flujo del proyecto sigue esta secuencia:
+El flujo del proyecto es:
 
-1. Carga y limpieza de datos.
-2. Analisis exploratorio.
-3. Pruebas ADF de raiz unitaria.
-4. Modelado ARIMA para la media.
-5. Pruebas ARCH y modelos GARCH para volatilidad.
-6. Modelo VAR sobre rendimientos.
-7. Causalidad de Granger, impulso-respuesta y pronosticos.
+1. Descarga de precios desde Yahoo Finance.
+2. Validacion y limpieza de datos.
+3. Calculo de rendimientos logaritmicos.
+4. Pruebas ADF de raiz unitaria.
+5. Seleccion ARIMA por AIC.
+6. Pruebas ARCH y estimacion GARCH.
+7. Estimacion VAR sobre rendimientos.
+8. Causalidad de Granger, pronostico e impulso-respuesta.
+9. Generacion de reporte y visualizaciones.
 
-Para construirlo y revisarlo por etapas, consulta `docs/build-step-by-step.md`.
+La explicacion metodologica esta en [docs/methodology.md](docs/methodology.md).
 
-La interpretacion inicial de resultados esta en `docs/results-interpretation.md`.
-
-## Estructura del repositorio
+## Estructura
 
 ```text
 .
-|-- README.md
-|-- pyproject.toml
+|-- config
+|   `-- data_sources.json
 |-- data
-|   |-- raw
-|   |   |-- README.md
-|   |   |-- BBVA.csv.example
-|   |   `-- SAN.csv.example
-|   `-- processed
+|   `-- raw
 |-- docs
+|   |-- figures
 |   |-- methodology.md
-|   `-- project-overview.md
+|   |-- results-interpretation.md
+|   `-- market-selection.md
 |-- outputs
 |-- scripts
-|   |-- generate_demo_data.py
-|   `-- run_analysis.py
+|   |-- download_prices.py
+|   |-- generate_figures.py
+|   |-- run_analysis.py
+|   `-- validate_data.py
 `-- src
     `-- econometria_financiera
-        |-- __init__.py
-        |-- data.py
-        |-- multivariate.py
-        |-- reporting.py
-        |-- univariate.py
-        `-- volatility.py
 ```
-
-## Requisitos
-
-Este proyecto usa Python 3.11+ y las bibliotecas:
-
-- `pandas`
-- `numpy`
-- `statsmodels`
-- `arch`
-- `matplotlib`
-- `yfinance`
 
 ## Instalacion
 
@@ -75,104 +101,53 @@ python -m venv .venv
 pip install -e .
 ```
 
-## Datos
+## Reproducir El Analisis
 
-Coloca tus archivos en `data/raw/` con los nombres:
-
-- `BBVA.csv`
-- `SAN.csv`
-
-El codigo acepta columnas con nombres como `Fecha`, `Date`, `Cierre`, `Close`, `Adj Close` o `Precio`.
-
-Tambien puedes descargarlos desde Yahoo Finance con:
+Descargar datos:
 
 ```bash
-pip install -e .
 python scripts/download_prices.py
 ```
 
-Los tickers se configuran en `config/data_sources.json`.
-
-Antes de cerrar conclusiones, revisa `docs/market-selection.md` para confirmar que los tickers correspondan al mercado que quieres analizar.
-
-Si cambias los tickers, sigue `docs/rerun-analysis.md` para regenerar resultados.
-
-Antes de ejecutar el analisis con datos reales, valida los archivos:
+Validar datos:
 
 ```bash
 python scripts/validate_data.py
 ```
 
-La guia completa de datos esta en `docs/data-step.md`.
-
-Si todavia no tienes datos, puedes generar un ejemplo reproducible:
-
-```bash
-python scripts/generate_demo_data.py
-```
-
-## Ejecucion
+Ejecutar analisis:
 
 ```bash
 python scripts/run_analysis.py
 ```
 
-Los resultados se guardan en `outputs/`:
-
-- `analysis_report.md`
-- `univariate_summary.csv`
-- `var_forecast.csv`
-- `series_preview.csv`
-
-Para generar las graficas del repositorio:
+Generar visualizaciones:
 
 ```bash
 python scripts/generate_figures.py
 ```
 
-## Visualizaciones
+Los resultados tecnicos se guardan en `outputs/`. Las graficas versionables se guardan en `docs/figures/`.
 
-![Precios de cierre](docs/figures/price_series.png)
+## Documentacion
 
-![Rendimientos logaritmicos](docs/figures/log_returns.png)
+- [Construccion paso a paso](docs/build-step-by-step.md)
+- [Datos y validacion](docs/data-step.md)
+- [Seleccion de mercado y tickers](docs/market-selection.md)
+- [Metodologia](docs/methodology.md)
+- [Interpretacion de resultados](docs/results-interpretation.md)
+- [Texto para CV y LinkedIn](docs/cv-project-entry.md)
 
-![Pronostico de varianza GARCH](docs/figures/garch_variance_forecast.png)
+## Tecnologias
 
-![Pronostico VAR](docs/figures/var_forecast.png)
+- Python
+- Pandas
+- NumPy
+- Statsmodels
+- ARCH
+- Matplotlib
+- yfinance
 
-![Impulso-respuesta](docs/figures/impulse_response.png)
+## Valor Para Portafolio
 
-## Valor para portafolio
-
-Este proyecto busca mostrar:
-
-- Capacidad para traducir analisis econometrico a codigo reproducible.
-- Dominio conceptual de series de tiempo.
-- Buenas practicas de documentacion y estructura.
-- Comunicacion tecnica clara para GitHub.
-
-## Habilidades que demuestra
-
-- Python para analisis de datos.
-- Series de tiempo financieras.
-- Econometria aplicada.
-- Modelado ARIMA, GARCH y VAR.
-- Limpieza y preparacion de datos.
-- Documentacion tecnica para proyectos reproducibles.
-
-## Como contarlo en GitHub
-
-Una forma clara de presentarlo es:
-
-> Reimplementacion en Python de un proyecto de econometria financiera originalmente desarrollado en R. El repositorio analiza precios de BBVA y Santander mediante pruebas ADF, modelos ARIMA, GARCH y VAR, con una estructura reproducible, documentacion clara y enfoque en interpretacion economica.
-
-Tambien puedes usar el archivo `docs/cv-project-entry.md` para adaptar la descripcion a tu CV o LinkedIn.
-
-Si es tu primera vez subiendo un proyecto, empieza con `docs/github-first-steps.md`.
-
-## Siguientes mejoras sugeridas
-
-- Agregar notebook explicativo con visualizaciones.
-- Incorporar pruebas unitarias.
-- Descargar precios desde una API financiera.
-- Publicar resultados y graficas con GitHub Pages.
+Este repositorio muestra capacidad para transformar un trabajo academico en un proyecto reproducible de analisis de datos: estructura modular, descarga automatizada, validacion de datos, modelado econometrico, visualizacion, interpretacion y documentacion clara.
