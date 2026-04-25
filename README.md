@@ -129,6 +129,13 @@ python scripts/generate_figures.py
 
 Los resultados tecnicos se guardan en `outputs/`. Las graficas versionables se guardan en `docs/figures/`.
 
+Ejecutar pruebas:
+
+```bash
+pip install -e ".[dev]"
+pytest
+```
+
 ## Documentacion
 
 - [Construccion paso a paso](docs/build-step-by-step.md)
@@ -137,6 +144,7 @@ Los resultados tecnicos se guardan en `outputs/`. Las graficas versionables se g
 - [Metodologia](docs/methodology.md)
 - [Interpretacion de resultados](docs/results-interpretation.md)
 - [Limitaciones y alcance](docs/limitations.md)
+- [Pruebas y checks](docs/testing.md)
 - [Texto para CV y LinkedIn](docs/cv-project-entry.md)
 
 ## Tecnologias
