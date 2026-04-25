@@ -20,3 +20,4 @@ data/raw/*.csv
 .python-version
 desktop.ini
 career/
+financial-time-series-econometric/
