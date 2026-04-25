@@ -150,6 +150,24 @@ Documentos utiles:
 
 Estado: iniciado.
 
+## Paso 9. Visualizaciones
+
+Objetivo: generar graficas versionables para que GitHub muestre los resultados de forma visual.
+
+Comando:
+
+```bash
+python scripts/generate_figures.py
+```
+
+Salida:
+
+```text
+docs/figures/
+```
+
+Estado: iniciado.
+
 ## Siguiente bloque recomendado
 
 El siguiente paso natural es reemplazar los datos demo por los CSV reales y revisar si cambian los resultados. Si aparece un error, se resuelve en esta secuencia:

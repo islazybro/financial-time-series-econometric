@@ -124,6 +124,24 @@ Los resultados se guardan en `outputs/`:
 - `var_forecast.csv`
 - `series_preview.csv`
 
+Para generar las graficas del repositorio:
+
+```bash
+python scripts/generate_figures.py
+```
+
+## Visualizaciones
+
+![Precios de cierre](docs/figures/price_series.png)
+
+![Rendimientos logaritmicos](docs/figures/log_returns.png)
+
+![Pronostico de varianza GARCH](docs/figures/garch_variance_forecast.png)
+
+![Pronostico VAR](docs/figures/var_forecast.png)
+
+![Impulso-respuesta](docs/figures/impulse_response.png)
+
 ## Valor para portafolio
 
 Este proyecto busca mostrar:
