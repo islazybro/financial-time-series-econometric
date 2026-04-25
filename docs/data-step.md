@@ -31,9 +31,9 @@ La configuracion vive en:
 config/data_sources.json
 ```
 
-Configuracion inicial:
+Configuracion actual:
 
-- BBVA: `BBVA.MX`
+- BBVA: `BBVA.MC`
 - Santander: `SAN.MC`
 - periodo: 2019-01-01 a 2026-01-01
 - frecuencia: mensual

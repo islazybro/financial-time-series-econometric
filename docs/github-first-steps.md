@@ -81,7 +81,7 @@ Estado actual:
 - Proyecto estructurado: listo.
 - Codigo base: listo.
 - Documentacion inicial: lista.
-- Git instalado: pendiente.
-- Repositorio publicado: pendiente.
+- Git instalado: listo.
+- Repositorio publicado: listo.
 
-Siguiente accion: instalar Git y confirmar que `git --version` funcione.
+Siguiente accion: continuar con los ciclos de trabajo: editar, validar, hacer commit y subir cambios.

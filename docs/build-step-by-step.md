@@ -53,7 +53,7 @@ Columnas aceptadas:
 - Fecha: `Fecha` o `Date`
 - Cierre: `Cierre`, `Close`, `Adj Close` o `Precio`
 
-Estado: pendiente de conectar los CSV reales.
+Estado: descarga reproducible completada. Pendiente regenerar resultados con `BBVA.MC` y `SAN.MC`.
 
 Guia detallada:
 
@@ -134,6 +134,7 @@ Documentos de interpretacion:
 
 - `docs/results-interpretation.md`
 - `docs/market-selection.md`
+- `docs/rerun-analysis.md`
 
 ## Paso 8. Pulido para portafolio
 

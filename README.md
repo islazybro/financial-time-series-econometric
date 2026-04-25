@@ -95,6 +95,8 @@ Los tickers se configuran en `config/data_sources.json`.
 
 Antes de cerrar conclusiones, revisa `docs/market-selection.md` para confirmar que los tickers correspondan al mercado que quieres analizar.
 
+Si cambias los tickers, sigue `docs/rerun-analysis.md` para regenerar resultados.
+
 Antes de ejecutar el analisis con datos reales, valida los archivos:
 
 ```bash

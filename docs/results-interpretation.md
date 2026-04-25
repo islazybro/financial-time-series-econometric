@@ -2,18 +2,20 @@
 
 Este documento resume la primera lectura econometrica del analisis generado por `scripts/run_analysis.py`.
 
+> Nota: esta interpretacion corresponde a la ejecucion anterior con `BBVA.MX` y `SAN.MC`. El proyecto ya fue ajustado para usar `BBVA.MC` y `SAN.MC`; por lo tanto, este documento debe actualizarse despues de volver a descargar datos y correr el analisis.
+
 ## Datos analizados
 
 La ejecucion actual usa precios mensuales descargados desde Yahoo Finance segun `config/data_sources.json`.
 
-Configuracion observada:
+Configuracion de la ejecucion interpretada:
 
 - BBVA: `BBVA.MX`
 - Santander: `SAN.MC`
 - periodo: 2019-01-01 a 2026-01-01
 - frecuencia: mensual
 
-Antes de cerrar conclusiones, conviene revisar `docs/market-selection.md`, porque los tickers actuales mezclan mercados distintos.
+Antes de cerrar conclusiones, conviene regenerar resultados con la configuracion actual documentada en `docs/market-selection.md`.
 
 ## Estacionariedad
 
@@ -106,4 +108,4 @@ El analisis muestra un patron comun en series financieras:
 - ausencia de causalidad de Granger significativa;
 - choques con efectos transitorios.
 
-Para fortalecer el proyecto final, el siguiente paso metodologico es decidir si se usaran tickers del mismo mercado. La recomendacion para una version de portafolio es usar `BBVA.MC` y `SAN.MC`, porque eso mejora la comparabilidad economica.
+Para fortalecer el proyecto final, la configuracion fue ajustada a `BBVA.MC` y `SAN.MC`. El siguiente paso es regenerar resultados con esos tickers y actualizar esta interpretacion con la nueva salida.

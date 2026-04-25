@@ -2,9 +2,9 @@
 
 La seleccion de tickers es una decision metodologica, no solo tecnica. En Yahoo Finance, una misma empresa puede tener varios tickers segun el mercado donde cotiza.
 
-## Configuracion actual
+## Configuracion anterior
 
-El archivo `config/data_sources.json` puede configurarse asi:
+El proyecto inicio con esta configuracion:
 
 ```json
 {
@@ -24,9 +24,9 @@ y:
 
 Esta configuracion compara BBVA en Mexico con Santander en Espana. Puede ser util si se quiere estudiar relacion entre mercados, pero no es la comparacion mas limpia si el objetivo es analizar dos bancos bajo el mismo mercado bursatil.
 
-## Configuracion recomendada para comparacion sectorial
+## Configuracion actual para comparacion sectorial
 
-Si el objetivo es comparar bancos europeos del mismo sector y mercado, se recomienda usar:
+Para comparar bancos europeos del mismo sector y mercado, el archivo `config/data_sources.json` usa:
 
 ```json
 {
@@ -52,7 +52,7 @@ Si se quiere mantener un enfoque centrado en Mexico, conviene revisar que ambas 
 
 ## Recomendacion para este proyecto
 
-Para un proyecto de CV y GitHub, la opcion mas defendible es:
+Para un proyecto de CV y GitHub, esta es la opcion mas defendible:
 
 - BBVA: `BBVA.MC`
 - Santander: `SAN.MC`

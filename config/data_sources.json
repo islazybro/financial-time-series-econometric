@@ -5,7 +5,7 @@
   "series": [
     {
       "name": "BBVA",
-      "ticker": "BBVA.MX",
+      "ticker": "BBVA.MC",
       "output": "data/raw/BBVA.csv"
     },
     {
