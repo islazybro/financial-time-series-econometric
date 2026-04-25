@@ -168,6 +168,24 @@ docs/figures/
 
 Estado: iniciado.
 
+## Paso 10. Pipeline completo
+
+Objetivo: ejecutar el proyecto completo con un solo comando.
+
+Comando con descarga:
+
+```bash
+python scripts/run_pipeline.py
+```
+
+Comando usando CSV existentes:
+
+```bash
+python scripts/run_pipeline.py --skip-download
+```
+
+Estado: iniciado.
+
 ## Siguiente bloque recomendado
 
 El siguiente paso natural es reemplazar los datos demo por los CSV reales y revisar si cambian los resultados. Si aparece un error, se resuelve en esta secuencia:

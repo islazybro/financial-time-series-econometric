@@ -90,6 +90,7 @@ La explicacion metodologica esta en [docs/methodology.md](docs/methodology.md).
 |   |-- download_prices.py
 |   |-- generate_figures.py
 |   |-- run_analysis.py
+|   |-- run_pipeline.py
 |   `-- validate_data.py
 `-- src
     `-- econometria_financiera
@@ -104,6 +105,18 @@ pip install -e .
 ```
 
 ## Reproducir El Analisis
+
+Ejecutar todo el flujo:
+
+```bash
+python scripts/run_pipeline.py
+```
+
+Si ya tienes los CSV en `data/raw/`, puedes omitir la descarga:
+
+```bash
+python scripts/run_pipeline.py --skip-download
+```
 
 Descargar datos:
 
@@ -146,6 +159,7 @@ pytest
 - [Metodologia](docs/methodology.md)
 - [Interpretacion de resultados](docs/results-interpretation.md)
 - [Limitaciones y alcance](docs/limitations.md)
+- [Pipeline completo](docs/pipeline.md)
 - [Pruebas y checks](docs/testing.md)
 - [Texto para CV y LinkedIn](docs/cv-project-entry.md)
 
