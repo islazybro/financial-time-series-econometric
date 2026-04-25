@@ -85,6 +85,7 @@ El flujo del proyecto es:
 10. Generacion de reporte y visualizaciones.
 
 Los activos analizados se configuran en `config/data_sources.json`, por lo que el pipeline puede reutilizarse con otros dos tickers comparables sin modificar los scripts principales.
+Un ejemplo completo para cambiar los activos a Apple y Microsoft esta documentado en [docs/pipeline.md](docs/pipeline.md).
 
 La explicacion metodologica esta en [docs/methodology.md](docs/methodology.md).
 
