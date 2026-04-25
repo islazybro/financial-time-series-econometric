@@ -27,10 +27,10 @@ La mejora principal no es solo el cambio de lenguaje. Tambien se corrigen proble
 
 Esta version adopta una idea central muy util para aprender econometria: primero una aplicacion concreta y despues la teoria necesaria para entenderla. En otras palabras, el repositorio no solo busca correr modelos, sino explicar por que cada prueba y cada especificacion tiene sentido dentro del problema financiero estudiado.
 
-## Enfoque de portafolio
+## Enfoque tecnico
 
-Este repositorio esta pensado para mostrar tres capacidades al mismo tiempo:
+Este repositorio integra tres componentes principales:
 
-1. Solidez tecnica en Python.
-2. Comprension econometrica real, no solo ejecucion de funciones.
+1. Implementacion modular en Python.
+2. Aplicacion econometrica justificada, no solo ejecucion de funciones.
 3. Comunicacion clara del razonamiento y los resultados.

@@ -1,6 +1,6 @@
 # Limitaciones y alcance
 
-Este proyecto tiene fines academicos y de portafolio. No constituye recomendacion de inversion ni asesoria financiera.
+Este proyecto tiene fines academicos y educativos. No constituye recomendacion de inversion ni asesoria financiera.
 
 ## Alcance del analisis
 

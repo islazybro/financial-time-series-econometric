@@ -4,7 +4,7 @@
 
 Proyecto de econometria financiera en Python para analizar las acciones de **BBVA** y **Banco Santander** en el mercado espanol mediante pruebas de estacionariedad, modelos ARIMA, volatilidad GARCH y modelos VAR.
 
-El proyecto original fue desarrollado en R como trabajo academico. Esta version lo reconstruye desde cero con una estructura reproducible, documentacion tecnica y una narrativa pensada para GitHub y portafolio profesional.
+El proyecto original fue desarrollado en R como trabajo academico. Esta version lo reconstruye desde cero con una estructura reproducible, documentacion tecnica y un pipeline reutilizable en Python.
 
 ## Resumen
 
@@ -172,7 +172,6 @@ pytest
 
 ## Documentacion
 
-- [Construccion paso a paso](docs/build-step-by-step.md)
 - [Datos y validacion](docs/data-step.md)
 - [Seleccion de mercado y tickers](docs/market-selection.md)
 - [Metodologia](docs/methodology.md)
@@ -191,9 +190,9 @@ pytest
 - Matplotlib
 - yfinance
 
-## Valor Para Portafolio
+## Valor Del Proyecto
 
-Este repositorio muestra capacidad para transformar un trabajo academico en un proyecto reproducible de analisis de datos: estructura modular, descarga automatizada, validacion de datos, modelado econometrico, visualizacion, interpretacion y documentacion clara.
+Este repositorio transforma un trabajo academico en un proyecto reproducible de analisis de datos: estructura modular, descarga automatizada, validacion de datos, modelado econometrico, visualizacion, interpretacion y documentacion clara.
 
 ## Licencia
 

@@ -50,9 +50,9 @@ Con esta seleccion, ambas series corresponden al mercado continuo espanol y esta
 
 Si se quiere mantener un enfoque centrado en Mexico, conviene revisar que ambas series representen activos comparables en el mismo mercado. BBVA Mexico cotiza como `BBVA.MX`, pero Santander Mexico no siempre esta disponible con la misma continuidad en Yahoo Finance. En ese caso, puede ser mejor explicar el proyecto como una comparacion internacional.
 
-## Recomendacion para este proyecto
+## Recomendacion para este analisis
 
-Para un proyecto de CV y GitHub, esta es la opcion mas defendible:
+Para una comparacion sectorial consistente, esta es la opcion mas defendible:
 
 - BBVA: `BBVA.MC`
 - Santander: `SAN.MC`
