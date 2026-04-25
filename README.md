@@ -25,6 +25,8 @@ El flujo del proyecto sigue esta secuencia:
 
 Para construirlo y revisarlo por etapas, consulta `docs/build-step-by-step.md`.
 
+La interpretacion inicial de resultados esta en `docs/results-interpretation.md`.
+
 ## Estructura del repositorio
 
 ```text
@@ -90,6 +92,8 @@ python scripts/download_prices.py
 ```
 
 Los tickers se configuran en `config/data_sources.json`.
+
+Antes de cerrar conclusiones, revisa `docs/market-selection.md` para confirmar que los tickers correspondan al mercado que quieres analizar.
 
 Antes de ejecutar el analisis con datos reales, valida los archivos:
 

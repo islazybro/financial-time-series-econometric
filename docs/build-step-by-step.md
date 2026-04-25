@@ -130,6 +130,11 @@ Salida principal:
 
 Estado: completado con datos demo.
 
+Documentos de interpretacion:
+
+- `docs/results-interpretation.md`
+- `docs/market-selection.md`
+
 ## Paso 8. Pulido para portafolio
 
 Objetivo: que el repositorio sea claro para una persona que lo vea en GitHub.
