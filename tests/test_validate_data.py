@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from scripts.validate_data import validate_series
+from econometria_financiera.validation import validate_series
 
 
 def test_validate_series_reports_clean_file(tmp_path):

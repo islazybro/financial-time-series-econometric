@@ -5,6 +5,9 @@ __pycache__/
 *.pyd
 *.egg-info/
 .pytest_cache/
+.pytest_tmp/
+pytest_tmp/
+pytest_tmp_*/
 outputs/
 
 # Datos reales: se recomienda no versionarlos
