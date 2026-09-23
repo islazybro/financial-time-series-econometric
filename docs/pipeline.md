@@ -31,7 +31,7 @@ El pipeline lee las series desde `config/data_sources.json`. Para reutilizar el 
 python scripts/run_pipeline.py
 ```
 
-La version actual esta disenada para comparar exactamente dos series. Los resultados univariados usan nombres dinamicos derivados del ticker, por ejemplo `aapl_arima_forecast.csv` o `msft_garch_forecast.csv`.
+La version actual esta disenada para comparar exactamente dos series. Los resultados univariados usan nombres dinamicos derivados del ticker, por ejemplo `aapl_arima_forecast.csv`. El modelo ARIMA se estima sobre log-precio y el pronostico incluye `mean_log` y `mean_price`.
 
 ### Ejemplo: Apple vs Microsoft
 
@@ -69,14 +69,17 @@ Archivos esperados para este ejemplo:
 
 ```text
 outputs/aapl_arima_forecast.csv
-outputs/aapl_garch_forecast.csv
 outputs/msft_arima_forecast.csv
-outputs/msft_garch_forecast.csv
-outputs/analysis_report.md
+outputs/univariate_summary.csv
 outputs/returns_comparison.csv
+outputs/returns_correlation.csv
+outputs/series_preview.csv
 outputs/var_forecast.csv
 outputs/impulse_response.csv
+outputs/analysis_report.md
 ```
+
+Los archivos `*_garch_forecast.csv` solo se generan si el ARCH-LM detecta efectos ARCH en esa serie; si no hay evidencia, GARCH no se estima y esos CSV no aparecen.
 
 En PowerShell, para listar o abrir resultados:
 

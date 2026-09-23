@@ -1,6 +1,6 @@
 # Pruebas y checks
 
-El proyecto incluye pruebas basicas para verificar que la carga de datos y la validacion funcionen correctamente.
+El proyecto incluye pruebas automatizadas con `pytest`.
 
 ## Instalar dependencias de desarrollo
 
@@ -13,6 +13,8 @@ pip install -e ".[dev]"
 ```bash
 pytest
 ```
+
+Referencia actual: **15 tests**.
 
 ## GitHub Actions
 
@@ -29,15 +31,19 @@ python -m pip install -e ".[dev]"
 pytest
 ```
 
-Si las pruebas pasan, GitHub muestra el estado correcto en la pestana `Actions` y en el badge del README.
+El workflow tambien ejecuta `ruff` para linting. Si todo pasa, GitHub muestra el estado en la pestana `Actions` y en el badge del README.
 
 ## Que cubren las pruebas
 
-- Lectura de CSV con columnas en espanol.
-- Lectura de CSV con columnas en ingles.
-- Calculo de rendimientos logaritmicos.
+- Lectura de CSV con columnas en espanol e ingles.
+- Calculo de log-precios y log-rendimientos; validacion de valores finitos.
 - Alineacion de fechas entre series.
-- Validacion de archivos limpios.
-- Deteccion de filas no numericas o encabezados extra.
+- Seleccion del orden de diferenciacion `d` con ADF.
+- Que `summarize_univariate` modela la serie de log-precio correcta.
+- Reconstruccion del precio desde el pronostico en log (positivo y coherente con `exp`).
+- Prueba KPSS: serie estacionaria (no rechaza) y paseo aleatorio (rechaza), incluyendo el manejo del p-valor en el borde tabulado.
+- Validacion de archivos limpios y deteccion de filas no numericas.
+- Configuracion de series y slug de tickers.
+- Escritura de CSV creando directorios.
 
-Estas pruebas no buscan validar toda la teoria econometrica. Su objetivo es proteger las piezas de preparacion de datos, que son la base del resto del analisis.
+Estas pruebas no validan toda la teoria econometrica; protegen las piezas de preparacion de datos, transformaciones y pruebas estadisticas basicas.

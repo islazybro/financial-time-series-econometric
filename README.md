@@ -2,92 +2,122 @@
 
 [![Tests](https://github.com/islazybro/financial-time-series-econometric/actions/workflows/tests.yml/badge.svg)](https://github.com/islazybro/financial-time-series-econometric/actions/workflows/tests.yml)
 
-Proyecto de econometria financiera en Python para analizar las acciones de **BBVA** y **Banco Santander** en el mercado espanol mediante pruebas de estacionariedad, modelos ARIMA, volatilidad GARCH y modelos VAR.
+Proyecto de econometria financiera en Python para analizar las acciones de **BBVA** y **Banco Santander** en el mercado espanol. Cubre pruebas de estacionariedad (ADF y KPSS), modelos ARIMA sobre log-precios, analisis de volatilidad (ARCH-LM y GARCH condicional), modelos VAR con diagnostico de residuos, causalidad de Granger e impulso-respuesta.
 
-El proyecto original fue desarrollado en R como trabajo academico. Esta version lo reconstruye desde cero con una estructura reproducible, documentacion tecnica y un pipeline reutilizable en Python.
+El proyecto original fue desarrollado en R como trabajo academico. Esta version lo reconstruye con una estructura reproducible, documentacion tecnica y un pipeline configurable.
 
-## Resumen
+## Objetivo
 
-El analisis usa precios mensuales descargados desde Yahoo Finance:
+Responder, con evidencia estadistica:
 
-- BBVA: `BBVA.MC`
-- Santander: `SAN.MC`
-- Periodo: 2019-01-01 a 2026-01-01
-- Frecuencia: mensual
-- Observaciones validas: 84 por serie
-
-Preguntas principales:
-
-1. Los precios son estacionarios o requieren transformacion.
+1. Si los log-precios son estacionarios o requieren diferenciacion.
 2. Que modelo ARIMA describe la dinamica de la media.
-3. Existe persistencia en la volatilidad mediante GARCH.
-4. Hay relacion dinamica entre ambas series mediante VAR, Granger e impulso-respuesta.
+3. Si existe evidencia de heterocedasticidad condicional (efectos ARCH).
+4. Si hay relacion dinamica entre ambas series mediante VAR, Granger e impulso-respuesta.
 
-## Resultados Principales
+## Datos
 
-- Los precios en niveles no son estacionarios segun ADF.
-- Los rendimientos logaritmicos son estacionarios.
-- El modelo seleccionado por AIC para ambas series fue `ARIMA(0, 2, 1)`.
-- Los diagnosticos ARIMA incorporan Ljung-Box y ACF de residuos.
-- El modelo `GARCH(1,1)` muestra alta persistencia en la volatilidad.
-- El `VAR(1)` no encuentra evidencia significativa de causalidad de Granger entre BBVA y Santander.
-- Las funciones impulso-respuesta sugieren que los choques tienen efectos transitorios.
+| Elemento | Valor |
+| --- | --- |
+| BBVA | `BBVA.MC` |
+| Santander | `SAN.MC` |
+| Fuente | Yahoo Finance (via `yfinance`) |
+| Campo de precio | precio ajustado (`Adj Close`) |
+| Periodo | 2019-01-01 a 2025-12-01 (config `end`: 2026-01-01) |
+| Frecuencia | mensual (`1mo`) |
+| Observaciones por serie | 84 precios, 83 log-rendimientos |
 
-La interpretacion completa esta en [docs/results-interpretation.md](docs/results-interpretation.md).
+Los activos y el periodo se configuran en `config/data_sources.json`. Los CSV reales no se versionan (ver `.gitignore`); se incluyen ejemplos `.csv.example`.
+
+> Nota de reproducibilidad: Yahoo Finance puede revisar el historico de `Adj Close`. Los resultados corresponden a la ejecucion actual; una nueva descarga podria cambiar ligeramente las cifras. El reporte generado incluye la fecha de snapshot.
+
+## Metodologia
+
+El pipeline sigue este flujo:
+
+```text
+precio ajustado (Adj Close)  -> analisis descriptivo y visualizacion
+log-precio                   -> estacionariedad (ADF/KPSS) y ARIMA de la media
+log-rendimiento (dlog)       -> volatilidad (ARCH-LM/GARCH) y VAR
+```
+
+1. Descarga de precios desde Yahoo Finance y validacion de los datos.
+2. Log-precio y log-rendimientos.
+3. Estacionariedad con **ADF** (H0: raiz unitaria) y **KPSS** (H0: estacionariedad), reportadas por separado.
+4. **ARIMA** sobre log-precios: `d` se determina con ADF; con `d` fijo, `p` y `q` se eligen por AIC (se reporta BIC). El pronostico se genera en log-precio y se transforma a precio.
+5. **ARCH-LM** sobre residuos de media constante de los log-rendimientos; **GARCH(1,1)** solo si hay efectos ARCH.
+6. **VAR** sobre log-rendimientos: seleccion de rezagos por AIC, estabilidad (raices del companion), Portmanteau, ARCH-LM por ecuacion y normalidad como diagnostico.
+7. **Causalidad de Granger** (H0 y conclusion) e **impulso-respuesta** con identificacion Cholesky (orden BBVA -> Santander) y bandas al 95%.
+8. Generacion de reporte (`outputs/analysis_report.md`), CSV y figuras.
+
+Metodologia detallada en [docs/methodology.md](docs/methodology.md).
+
+## Resultados principales
+
+Corresponden a la ejecucion actual. Consulta el reporte generado para el detalle.
+
+Estacionariedad:
+
+| Serie | ADF log-precio (H0: raiz unitaria) | KPSS log-precio (H0: estacionariedad) | ADF log-rend. | KPSS log-rend. |
+| --- | --- | --- | --- | --- |
+| BBVA | p=0.9909 (no rechaza) | p=0.0100 (rechaza) | p≈0 (rechaza) | p=0.0929 (no rechaza) |
+| Santander | p=0.9892 (no rechaza) | p=0.0100 (rechaza) | p≈0 (rechaza) | p=0.0455 (rechaza) |
+
+Salvedad: en Santander, el ADF y el KPSS sobre rendimientos son **discordantes** (ADF rechaza raiz unitaria y KPSS rechaza estacionariedad al 5%). Se reporta sin forzar una clasificacion automatica.
+
+ARIMA (log-precio):
+
+| Serie | Modelo | AIC | BIC | Ljung-Box (lag 10) |
+| --- | --- | --- | --- | --- |
+| BBVA | ARIMA(0, 1, 0) | -134.2643 | -131.8455 | 0.9986 |
+| Santander | ARIMA(0, 1, 0) | -143.3007 | -140.8818 | 0.9714 |
+
+El AIC/BIC no es comparable entre representaciones distintas (precio bruto vs log-precio).
+
+Volatilidad:
+
+- ARCH-LM (media constante): BBVA p=0.961; Santander p=0.907.
+- No hay evidencia de efectos ARCH, por lo que **GARCH(1,1) no se estima**.
+
+VAR y dinamica conjunta:
+
+- VAR(1) seleccionado por AIC: AIC=-10.6948, BIC=-10.5187, HQIC=-10.6241, FPE=2.27e-05.
+- Sistema estable (raices del companion con |z| ≈ 7.27 > 1).
+- Portmanteau (10 rezagos): p=0.5512 (sin autocorrelacion residual).
+- Normalidad multivariante: p≈0 (diagnostico descriptivo, no condicion de validez).
+- Correlacion contemporanea de log-rendimientos: 0.8853 (descriptiva, no causal).
+- Granger: BBVA -> Santander p=0.2166; Santander -> BBVA p=0.8160 (sin evidencia de causalidad predictiva).
+- Impulso-respuesta Cholesky (orden BBVA -> Santander): efectos pequenos y transitorios; los intervalos al 95% de las respuestas cruzadas incluyen 0.
 
 ## Visualizaciones
 
-### Precios de cierre
+### Precios ajustados
 
-![Precios de cierre](docs/figures/price_series.png)
+![Precios ajustados](docs/figures/price_series.png)
 
-### Rendimientos logaritmicos
+### Log-rendimientos
 
-![Rendimientos logaritmicos](docs/figures/log_returns.png)
+![Log-rendimientos](docs/figures/log_returns.png)
 
-### Comparativo de retornos
+### Comparativo de log-rendimientos
 
-![Comparativo de retornos](docs/figures/returns_comparison.png)
+![Comparativo de log-rendimientos](docs/figures/returns_comparison.png)
 
-### Diagnostico ARIMA
+### Diagnostico ARIMA (ACF de residuos)
 
 ![ACF de residuos ARIMA](docs/figures/arima_residual_acf.png)
 
-### Pronostico ARIMA
+### Pronostico ARIMA (precio reconstruido)
 
 ![Pronostico ARIMA](docs/figures/arima_forecast.png)
-
-### Pronostico de varianza GARCH
-
-![Pronostico de varianza GARCH](docs/figures/garch_variance_forecast.png)
 
 ### Pronostico VAR
 
 ![Pronostico VAR](docs/figures/var_forecast.png)
 
-### Impulso-respuesta
+### Impulso-respuesta (Cholesky, IC 95%)
 
 ![Impulso-respuesta](docs/figures/impulse_response.png)
-
-## Metodologia
-
-El flujo del proyecto es:
-
-1. Descarga de precios desde Yahoo Finance.
-2. Validacion y limpieza de datos.
-3. Calculo de rendimientos logaritmicos.
-4. Pruebas ADF de raiz unitaria.
-5. Seleccion, diagnostico y pronostico ARIMA.
-6. Comparativo de retornos.
-7. Pruebas ARCH y estimacion GARCH.
-8. Estimacion VAR sobre rendimientos.
-9. Causalidad de Granger, pronostico e impulso-respuesta.
-10. Generacion de reporte y visualizaciones.
-
-Los activos analizados se configuran en `config/data_sources.json`, por lo que el pipeline puede reutilizarse con otros dos tickers comparables sin modificar los scripts principales.
-Un ejemplo completo para cambiar los activos a Apple y Microsoft esta documentado en [docs/pipeline.md](docs/pipeline.md).
-
-La explicacion metodologica esta en [docs/methodology.md](docs/methodology.md).
 
 ## Estructura
 
@@ -101,16 +131,29 @@ La explicacion metodologica esta en [docs/methodology.md](docs/methodology.md).
 |   |-- figures
 |   |-- methodology.md
 |   |-- results-interpretation.md
-|   `-- market-selection.md
-|-- outputs
+|   |-- data-step.md
+|   |-- pipeline.md
+|   |-- limitations.md
+|   `-- testing.md
 |-- scripts
 |   |-- download_prices.py
-|   |-- generate_figures.py
+|   |-- validate_data.py
 |   |-- run_analysis.py
-|   |-- run_pipeline.py
-|   `-- validate_data.py
-`-- src
-    `-- econometria_financiera
+|   |-- generate_figures.py
+|   |-- generate_demo_data.py
+|   `-- run_pipeline.py
+|-- src
+|   `-- econometria_financiera
+|       |-- data.py
+|       |-- io.py
+|       |-- project_config.py
+|       |-- reporting.py
+|       |-- univariate.py
+|       |-- volatility.py
+|       |-- multivariate.py
+|       `-- validation.py
+|-- tests
+`-- outputs            # generado, no versionado
 ```
 
 ## Instalacion
@@ -121,7 +164,7 @@ python -m venv .venv
 pip install -e .
 ```
 
-## Reproducir El Analisis
+## Reproducir el analisis
 
 Ejecutar todo el flujo:
 
@@ -135,40 +178,57 @@ Si ya tienes los CSV en `data/raw/`, puedes omitir la descarga:
 python scripts/run_pipeline.py --skip-download
 ```
 
-Descargar datos:
+Por etapas:
 
 ```bash
 python scripts/download_prices.py
-```
-
-Validar datos:
-
-```bash
 python scripts/validate_data.py
-```
-
-Ejecutar analisis:
-
-```bash
 python scripts/run_analysis.py
-```
-
-Generar visualizaciones:
-
-```bash
 python scripts/generate_figures.py
 ```
 
-Los resultados tecnicos se guardan en `outputs/`. Las graficas versionables se guardan en `docs/figures/`.
+Salidas:
 
-Los pronosticos univariados usan nombres derivados del ticker configurado, por ejemplo `bbva_mc_arima_forecast.csv` y `san_mc_garch_forecast.csv`.
+- `outputs/`: `analysis_report.md` y CSV (no versionados).
+- `docs/figures/`: figuras versionadas para GitHub.
 
-Ejecutar pruebas:
+Los pronosticos univariados usan nombres derivados del ticker (`bbva_mc_arima_forecast.csv`, `san_mc_arima_forecast.csv`) y exponen el pronostico en log-precio (`mean_log`) y en precio reconstruido (`mean_price`).
+
+## Tests
 
 ```bash
 pip install -e ".[dev]"
 pytest
 ```
+
+Referencia actual: **15 tests** que cubren carga y validacion de datos, log-precios, seleccion de `d`, KPSS, configuracion e IO. Detalle en [docs/testing.md](docs/testing.md).
+
+## Reproducibilidad
+
+- Los modelos son deterministas; el demo usa semillas fijas.
+- La configuracion de tickers, periodo y frecuencia vive en `config/data_sources.json`.
+- Las rutas se resuelven contra la raiz del proyecto.
+- El reporte generado incluye fuente, campo de precio, periodo y fecha de snapshot.
+- Las cifras de este README y de `docs/` provienen de la ejecucion actual; si Yahoo Finance revisa los datos, pueden cambiar.
+
+## Limitaciones
+
+- La frecuencia mensual y 84 observaciones limitan conclusiones fuertes.
+- Los modelos son sensibles a especificacion, rezagos y periodo muestral.
+- ADF y KPSS pueden discrepar (caso Santander en rendimientos); no se aplica una regla automatica.
+- La causalidad de Granger es predictiva, no causalidad economica.
+- El analisis no incorpora variables macroeconomicas ni fundamentales.
+- No constituye recomendacion de inversion. Ver [docs/limitations.md](docs/limitations.md).
+
+## Tecnologias
+
+- Python
+- Pandas
+- NumPy
+- Statsmodels (ADF, KPSS, ARIMA, VAR)
+- ARCH (GARCH, cuando aplica)
+- Matplotlib
+- yfinance
 
 ## Documentacion
 
@@ -179,20 +239,6 @@ pytest
 - [Limitaciones y alcance](docs/limitations.md)
 - [Pipeline completo](docs/pipeline.md)
 - [Pruebas y checks](docs/testing.md)
-
-## Tecnologias
-
-- Python
-- Pandas
-- NumPy
-- Statsmodels
-- ARCH
-- Matplotlib
-- yfinance
-
-## Valor Del Proyecto
-
-Este repositorio transforma un trabajo academico en un proyecto reproducible de analisis de datos: estructura modular, descarga automatizada, validacion de datos, modelado econometrico, visualizacion, interpretacion y documentacion clara.
 
 ## Licencia
 

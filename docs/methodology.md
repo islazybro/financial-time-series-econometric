@@ -2,87 +2,81 @@
 
 ## 1. Preparacion de datos
 
-Se leen dos series de precios de cierre, una para BBVA y otra para Santander. El pipeline estandariza nombres de columnas, convierte fechas y ordena las observaciones cronologicamente.
+Se leen dos series de precios ajustados (`Adj Close`) desde los CSV definidos en `config/data_sources.json`. El pipeline estandariza nombres de columnas, convierte fechas, ordena cronologicamente, elimina duplicados y valida que los precios sean positivos y la muestra suficiente.
+
+La separacion conceptual es:
+
+```text
+precio ajustado (Adj Close)  -> analisis descriptivo y visualizacion
+log-precio = log(precio)     -> estacionariedad y modelo ARIMA de la media
+log-rendimiento = dlog(precio) -> volatilidad y modelos VAR
+```
 
 ## 2. Transformaciones
 
-Se trabaja con dos representaciones:
+- `log-precio` (`r_t = log(P_t)`): se usa para pruebas de raiz unitaria y para el ARIMA de la media.
+- `log-rendimiento` (`r_t = log(P_t / P_{t-1})`): se usa para volatilidad y analisis multivariado.
 
-- precios en niveles, utiles para diagnostico inicial y modelado ARIMA;
-- rendimientos logaritmicos, utiles para estacionariedad, volatilidad y VAR.
+## 3. Estacionariedad: ADF y KPSS
 
-La formula usada es:
+Se aplican dos pruebas complementarias, con hipotesis nulas distintas:
 
-```text
-r_t = log(P_t / P_{t-1})
-```
+- **ADF**: H0 = la serie tiene raiz unitaria (no estacionaria). Rechazar H0 sugiere estacionariedad.
+- **KPSS**: H0 = la serie es estacionaria. Rechazar H0 sugiere no estacionariedad.
 
-## 3. Estacionariedad
+Se aplican a:
 
-La prueba ADF evalua la hipotesis nula de raiz unitaria.
+1. log-precio (niveles);
+2. log-rendimientos (primera diferencia del log-precio).
 
-- Si no se rechaza la hipotesis nula en niveles, la serie se considera no estacionaria.
-- Si se rechaza en rendimientos o diferencias, la transformacion logra estacionariedad.
+ADF se usa para fijar el orden de integracion `d` (se diferencia hasta rechazar la raiz unitaria). Cuando ADF y KPSS discrepan, se reportan ambas evidencias sin forzar una clasificacion automatica.
 
-## 4. Modelo ARIMA
+## 4. Modelo ARIMA (sobre log-precio)
 
-ARIMA modela la dinamica de la media mediante componentes:
+ARIMA modela la dinamica de la media mediante componentes autorregresivos (AR), integrados (I) y de medias moviles (MA).
 
-- autorregresivos (AR),
-- integrados (I),
-- de medias moviles (MA).
+- El orden de diferenciacion `d` se determina por ADF. No se elige por AIC porque el AIC no es comparable entre grados de diferenciacion (cambia el dato modelado).
+- Con `d` fijo, `p` y `q` se seleccionan minimizando **AIC** en una grilla pequena; se reporta tambien **BIC**.
+- Despues de estimar, se revisan los residuos con ACF y **Ljung-Box**.
+- El pronostico se genera en log-precio y se transforma de nuevo a precio con `exp()`. No se comparan AIC entre representaciones distintas (precio bruto vs log-precio).
 
-En este proyecto se prueba una pequena grilla de modelos y se selecciona el de menor AIC entre los candidatos estables y estimables.
+## 5. Comparativo de rendimientos
 
-Despues de seleccionar el modelo, se revisan los residuos mediante:
-
-- ACF de residuos;
-- prueba Ljung-Box.
-
-La idea es verificar si queda autocorrelacion sistematica sin modelar. Si los residuos se aproximan a ruido blanco, el modelo captura mejor la dinamica de la media.
-
-Tambien se genera un pronostico ARIMA univariado para cada serie.
-
-## 5. Comparativo de retornos
-
-Se comparan los rendimientos logaritmicos de BBVA y Santander mediante estadisticos descriptivos:
-
-- media;
-- volatilidad;
-- minimo;
-- maximo;
-- correlacion.
-
-Este bloque ayuda a interpretar diferencias de rendimiento y riesgo entre ambas series antes del modelo VAR.
+Se comparan los log-rendimientos mediante estadisticos descriptivos (media, volatilidad, minimo, maximo) y su correlacion contemporanea. Es un bloque descriptivo, previo al VAR.
 
 ## 6. Efectos ARCH y modelo GARCH
 
-Las series financieras suelen mostrar volatilidad agrupada. Para evaluar esto:
+1. Se ajusta un modelo de media constante sobre log-rendimientos.
+2. Se aplica **ARCH-LM** sobre los residuos de ese modelo de media (consistente con la media del GARCH).
+3. Se estima **GARCH(1,1)** solo si el ARCH-LM rechaza homocedasticidad (p-valor < 0.05).
 
-1. se ajusta un modelo para la media;
-2. se aplican pruebas ARCH sobre los residuos;
-3. se estima un modelo GARCH(1,1) para la varianza condicional.
-
-La ecuacion de volatilidad tiene la forma:
+Ecuacion de volatilidad:
 
 ```text
 sigma_t^2 = omega + alpha * e_{t-1}^2 + beta * sigma_{t-1}^2
 ```
 
+Si no hay evidencia de efectos ARCH, no se estima GARCH (no se fuerza el modelo).
+
 ## 7. Modelo VAR
 
-Sobre los rendimientos de ambas acciones se estima un VAR para capturar interdependencia dinamica. A partir de este modelo se obtienen:
+Sobre los log-rendimientos se estima un VAR:
 
-- seleccion de rezagos,
-- pronosticos multivariados,
-- pruebas de causalidad de Granger,
-- funciones impulso-respuesta.
+- seleccion de rezagos por criterio de informacion (AIC; se reportan BIC, HQIC y FPE), sin imponer un minimo de rezagos;
+- estabilidad mediante las raices del polinomio companion (todas deben quedar fuera del circulo unitario);
+- diagnostico de residuos: Portmanteau (autocorrelacion), normalidad multivariante (Jarque-Bera, como diagnostico) y ARCH-LM por ecuacion;
+- **causalidad de Granger**, reportando H0, estadistico y conclusion. Es causalidad predictiva, no causalidad economica;
+- **funciones impulso-respuesta** con identificacion de Cholesky y bandas al 95%.
 
-## 8. Interpretacion
+## 8. Identificacion de las impulso-respuesta
+
+Las IRF se identifican con **Cholesky** (ortogonalizacion recursiva). El orden de las variables es **BBVA -> Santander**, que implica que BBVA puede afectar contemporaneamente a Santander pero no al reves. El orden importa: se realizo una verificacion de sensibilidad y la conclusion cualitativa (efectos pequenos y transitorios) se mantiene. Las bandas al 95% se obtienen del error estandar asintotico de las IRF.
+
+## 9. Interpretacion
 
 La meta no es solo obtener salidas del software, sino traducirlas a lenguaje economico:
 
-- si una serie tiene raiz unitaria,
-- si existe persistencia en la volatilidad,
-- si un activo ayuda a predecir al otro,
+- si el log-precio tiene raiz unitaria y el log-rendimiento es estacionario;
+- si existe persistencia en la volatilidad (solo cuando hay evidencia ARCH);
+- si un activo ayuda a predecir al otro (Granger, predictivo);
 - y si los choques se transmiten de forma duradera o transitoria.

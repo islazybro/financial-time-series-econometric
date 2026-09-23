@@ -1,13 +1,9 @@
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
 import pandas as pd
 import yfinance as yf
 
-
-CONFIG_PATH = Path("config/data_sources.json")
+from econometria_financiera.project_config import load_data_config, resolve_path
 
 
 def normalize_prices(frame: pd.DataFrame) -> pd.DataFrame:
@@ -44,26 +40,23 @@ def download_one(name: str, ticker: str, output: str, start: str, end: str, inte
     )
     prices = normalize_prices(raw)
 
-    output_path = Path(output)
+    output_path = resolve_path(output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     prices.to_csv(output_path, index=False)
     print(f"Guardado: {output_path} ({len(prices)} observaciones)")
 
 
 def main() -> None:
-    config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
-    start = config["start"]
-    end = config["end"]
-    interval = config.get("interval", "1mo")
+    config = load_data_config()
 
-    for item in config["series"]:
+    for item in config.series:
         download_one(
-            name=item["name"],
-            ticker=item["ticker"],
-            output=item["output"],
-            start=start,
-            end=end,
-            interval=interval,
+            name=item.name,
+            ticker=item.ticker,
+            output=item.output,
+            start=config.start,
+            end=config.end,
+            interval=config.interval,
         )
 
 

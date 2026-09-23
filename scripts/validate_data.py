@@ -7,7 +7,7 @@ from econometria_financiera.validation import validate_series
 def main() -> None:
     print("Validando archivos en data/raw...\n")
     for item in load_series_config():
-        for message in validate_series(item.name, item.output):
+        for message in validate_series(item.name, item.resolved_output):
             print(message)
 
 

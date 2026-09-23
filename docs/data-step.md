@@ -1,6 +1,6 @@
 # Paso 2: conseguir y validar datos reales
 
-Antes de interpretar ARIMA, GARCH o VAR, necesitamos que los datos sean confiables. Este paso evita errores comunes como fechas mal leidas, columnas con nombres distintos, precios vacios o series demasiado cortas.
+Antes de interpretar ADF, KPSS, ARIMA, GARCH o VAR, necesitamos que los datos sean confiables. Este paso evita errores comunes como fechas mal leidas, columnas con nombres distintos, precios vacios o series demasiado cortas.
 
 ## Archivos que necesitamos
 
@@ -13,7 +13,7 @@ data/raw/SAN.csv
 
 ## Opcion recomendada: descargar desde Yahoo Finance
 
-El proyecto incluye un script para descargar precios mensuales:
+El proyecto incluye un script para descargar precios mensuales. Por defecto usa el **precio ajustado** (`Adj Close`):
 
 ```bash
 pip install -e .
@@ -25,20 +25,18 @@ python scripts/download_prices.py
 
 El primer comando instala las dependencias del proyecto, incluyendo `yfinance`.
 
-La configuracion vive en:
-
-```text
-config/data_sources.json
-```
+La configuracion vive en `config/data_sources.json`, que incluye `start`, `end`, `interval`, `source` y `price_field`, ademas de la lista de series.
 
 Configuracion actual:
 
 - BBVA: `BBVA.MC`
 - Santander: `SAN.MC`
-- periodo: 2019-01-01 a 2026-01-01
-- frecuencia: mensual
+- periodo: 2019-01-01 a 2026-01-01 (`end` exclusivo; el ultimo dato es 2025-12-01)
+- frecuencia: mensual (`1mo`)
+- fuente: Yahoo Finance (via `yfinance`)
+- precio: `Adj Close`
 
-Importante: si quieres analizar otro mercado, cambia los tickers en `config/data_sources.json`. Por ejemplo, una accion puede tener ticker distinto si se toma de Mexico, Espana o Estados Unidos.
+Importante: si quieres analizar otro mercado, cambia los tickers en `config/data_sources.json`.
 
 Si aparece un error como `No module named yfinance`, vuelve a ejecutar:
 
@@ -56,8 +54,8 @@ El formato minimo es:
 
 ```csv
 Fecha,Cierre
-2019-01-31,102.45
-2019-02-28,104.18
+2019-01-01,3.37
+2019-02-01,3.57
 ```
 
 Tambien se aceptan estos nombres:
@@ -65,14 +63,15 @@ Tambien se aceptan estos nombres:
 - Fecha: `Fecha` o `Date`
 - Precio: `Cierre`, `Close`, `Adj Close` o `Precio`
 
+El script de descarga guarda la columna de precio como `Cierre`, pero el valor corresponde al `Adj Close` de Yahoo Finance.
+
 ## Recomendacion de periodo
 
-Para que el analisis sea parecido al proyecto original:
-
 - frecuencia: mensual;
-- periodo sugerido: 2019 a 2025;
 - minimo recomendado: 36 observaciones por serie;
 - ideal: 60 o mas observaciones.
+
+La muestra actual tiene 84 observaciones (2019-01 a 2025-12).
 
 ## Validar datos
 
@@ -85,8 +84,8 @@ python scripts/validate_data.py
 Si todo esta bien, deberias ver algo parecido a:
 
 ```text
-BBVA: OK. Observaciones=84, inicio=2019-01-31, fin=2025-12-31
-Santander: OK. Observaciones=84, inicio=2019-01-31, fin=2025-12-31
+BBVA: OK. Observaciones=84, inicio=2019-01-01, fin=2025-12-01, precio_min=1.72, precio_max=19.41
+Santander: OK. Observaciones=84, inicio=2019-01-01, fin=2025-12-01, precio_min=1.27, precio_max=9.95
 ```
 
 ## Despues de validar
@@ -106,3 +105,7 @@ outputs/analysis_report.md
 ## Nota para GitHub
 
 Los archivos `BBVA.csv` y `SAN.csv` reales no se suben a GitHub porque `.gitignore` los excluye. En GitHub se suben los ejemplos `.csv.example` y la documentacion para que otra persona sepa como preparar sus propios datos.
+
+## Nota de reproducibilidad
+
+Yahoo Finance puede revisar el historico de `Adj Close`. El reporte generado incluye la fecha de snapshot; las cifras pueden cambiar en una nueva descarga.

@@ -13,7 +13,9 @@ def clean_analysis_outputs(output_dir: str | Path) -> None:
             try:
                 path.unlink()
             except PermissionError as exc:
-                raise PermissionError(f"No se pudo limpiar {path}. Cierra el archivo si esta abierto y vuelve a intentar.") from exc
+                raise PermissionError(
+                    f"No se pudo limpiar {path}. Cierra el archivo si esta abierto y vuelve a intentar."
+                ) from exc
 
 
 def write_csv(frame: pd.DataFrame, path: str | Path, index: bool = False) -> None:
@@ -22,4 +24,6 @@ def write_csv(frame: pd.DataFrame, path: str | Path, index: bool = False) -> Non
     try:
         frame.to_csv(path, index=index)
     except PermissionError as exc:
-        raise PermissionError(f"No se pudo escribir {path}. Cierra el archivo si esta abierto y vuelve a intentar.") from exc
+        raise PermissionError(
+            f"No se pudo escribir {path}. Cierra el archivo si esta abierto y vuelve a intentar."
+        ) from exc

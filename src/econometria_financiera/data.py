@@ -6,7 +6,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-
 DATE_COLUMNS = ("Fecha", "Date")
 PRICE_COLUMNS = ("Cierre", "Close", "Adj Close", "Precio")
 
@@ -16,6 +15,13 @@ class SeriesBundle:
     name: str
     prices: pd.Series
     returns: pd.Series
+
+    @property
+    def log_prices(self) -> pd.Series:
+        """Log-precio: variable usada para el modelado ARIMA de la media."""
+        log_series = np.log(self.prices)
+        log_series.name = f"{self.name}_log_price"
+        return log_series
 
 
 def _find_column(columns: list[str], candidates: tuple[str, ...]) -> str:
@@ -47,7 +53,7 @@ def load_price_series(csv_path: str | Path, series_name: str) -> SeriesBundle:
     prices = cleaned.set_index("date")["close"].astype(float)
     inferred_frequency = pd.infer_freq(prices.index)
     if inferred_frequency is not None:
-        prices = prices.asfreq(inferred_frequency)
+        prices = prices.asfreq(inferred_frequency).dropna()
 
     returns = np.log(prices / prices.shift(1)).dropna()
     returns.name = f"{series_name}_returns"

@@ -7,12 +7,12 @@ Este proyecto tiene fines academicos y educativos. No constituye recomendacion d
 El objetivo es mostrar un flujo econometrico reproducible aplicado a series financieras:
 
 - descarga y validacion de datos;
-- pruebas de estacionariedad;
-- modelado ARIMA;
-- modelado GARCH;
-- modelo VAR;
+- pruebas de estacionariedad (ADF y KPSS);
+- modelado ARIMA sobre log-precios;
+- analisis de volatilidad (ARCH-LM; GARCH condicional);
+- modelo VAR con diagnostico de residuos;
 - causalidad de Granger;
-- impulso-respuesta;
+- impulso-respuesta (Cholesky);
 - visualizaciones e interpretacion.
 
 ## Limitaciones metodologicas
@@ -20,7 +20,9 @@ El objetivo es mostrar un flujo econometrico reproducible aplicado a series fina
 - La frecuencia mensual reduce ruido, pero tambien elimina informacion diaria relevante.
 - La muestra contiene 84 observaciones, suficiente para un ejercicio aplicado, pero limitada para conclusiones fuertes.
 - Los modelos ARIMA, GARCH y VAR son sensibles a especificacion, rezagos, periodo muestral y transformaciones.
+- ADF y KPSS pueden discrepar: en Santander (log-rendimientos) el ADF rechaza raiz unitaria y el KPSS rechaza estacionariedad al 5% (p=0.0455). La discordancia se reporta como salvedad y no se resuelve con una regla automatica.
 - La ausencia de causalidad de Granger no implica ausencia de relacion economica entre empresas.
+- La IRF depende del orden de Cholesky; se documento el orden y se verifico la sensibilidad.
 - Los resultados pueden cambiar si se modifica el periodo, la frecuencia, los tickers o la fuente de datos.
 - El analisis no incorpora variables macroeconomicas, fundamentales financieros ni eventos corporativos.
 
@@ -28,9 +30,12 @@ El objetivo es mostrar un flujo econometrico reproducible aplicado a series fina
 
 Los precios se descargan desde Yahoo Finance mediante `yfinance`. Esto facilita la reproducibilidad, pero depende de la disponibilidad y consistencia de la fuente externa.
 
+- Yahoo Finance puede revisar el historico de `Adj Close`; una nueva descarga puede cambiar ligeramente las cifras.
+- El reporte generado incluye la fecha de snapshot para dejar constancia de la ejecucion.
+
 Por esa razon, el proyecto incluye:
 
-- archivo de configuracion de tickers;
+- archivo de configuracion de tickers, periodo, fuente y campo de precio;
 - script de validacion de datos;
 - documentacion sobre seleccion de mercado;
 - advertencias sobre archivos con filas descartadas.
