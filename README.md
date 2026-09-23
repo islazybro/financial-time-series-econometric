@@ -23,9 +23,9 @@ Responder, con evidencia estadistica:
 | Santander | `SAN.MC` |
 | Fuente | Yahoo Finance (via `yfinance`) |
 | Campo de precio | precio ajustado (`Adj Close`) |
-| Periodo | 2019-01-01 a 2025-12-01 (config `end`: 2026-01-01) |
+| Periodo | 2019-01-01 a 2026-09-01 (config `end`: 2026-09-23) |
 | Frecuencia | mensual (`1mo`) |
-| Observaciones por serie | 84 precios, 83 log-rendimientos |
+| Observaciones por serie | 93 precios, 92 log-rendimientos |
 
 Los activos y el periodo se configuran en `config/data_sources.json`. Los CSV reales no se versionan (ver `.gitignore`); se incluyen ejemplos `.csv.example`.
 
@@ -60,8 +60,8 @@ Estacionariedad:
 
 | Serie | ADF log-precio (H0: raiz unitaria) | KPSS log-precio (H0: estacionariedad) | ADF log-rend. | KPSS log-rend. |
 | --- | --- | --- | --- | --- |
-| BBVA | p=0.9909 (no rechaza) | p=0.0100 (rechaza) | p≈0 (rechaza) | p=0.0929 (no rechaza) |
-| Santander | p=0.9892 (no rechaza) | p=0.0100 (rechaza) | p≈0 (rechaza) | p=0.0455 (rechaza) |
+| BBVA | p=0.9902 (no rechaza) | p=0.0100 (rechaza) | p≈0 (rechaza) | p=0.1000 (no rechaza) |
+| Santander | p=0.9905 (no rechaza) | p=0.0100 (rechaza) | p≈0 (rechaza) | p=0.0452 (rechaza) |
 
 Salvedad: en Santander, el ADF y el KPSS sobre rendimientos son **discordantes** (ADF rechaza raiz unitaria y KPSS rechaza estacionariedad al 5%). Se reporta sin forzar una clasificacion automatica.
 
@@ -69,24 +69,24 @@ ARIMA (log-precio):
 
 | Serie | Modelo | AIC | BIC | Ljung-Box (lag 10) |
 | --- | --- | --- | --- | --- |
-| BBVA | ARIMA(0, 1, 0) | -134.2643 | -131.8455 | 0.9986 |
-| Santander | ARIMA(0, 1, 0) | -143.3007 | -140.8818 | 0.9714 |
+| BBVA | ARIMA(0, 1, 0) | -154.2675 | -151.7457 | 0.9981 |
+| Santander | ARIMA(0, 1, 0) | -163.4534 | -160.9316 | 0.9696 |
 
 El AIC/BIC no es comparable entre representaciones distintas (precio bruto vs log-precio).
 
 Volatilidad:
 
-- ARCH-LM (media constante): BBVA p=0.961; Santander p=0.907.
+- ARCH-LM (media constante): BBVA p=0.956; Santander p=0.881.
 - No hay evidencia de efectos ARCH, por lo que **GARCH(1,1) no se estima**.
 
 VAR y dinamica conjunta:
 
-- VAR(1) seleccionado por AIC: AIC=-10.6948, BIC=-10.5187, HQIC=-10.6241, FPE=2.27e-05.
-- Sistema estable (raices del companion con |z| ≈ 7.27 > 1).
-- Portmanteau (10 rezagos): p=0.5512 (sin autocorrelacion residual).
+- VAR(1) seleccionado por AIC: AIC=-10.7704, BIC=-10.6048, HQIC=-10.7036, FPE=2.10e-05.
+- Sistema estable (raices del companion con |z| ≈ 6.70 > 1).
+- Portmanteau (10 rezagos): p=0.6394 (sin autocorrelacion residual).
 - Normalidad multivariante: p≈0 (diagnostico descriptivo, no condicion de validez).
-- Correlacion contemporanea de log-rendimientos: 0.8853 (descriptiva, no causal).
-- Granger: BBVA -> Santander p=0.2166; Santander -> BBVA p=0.8160 (sin evidencia de causalidad predictiva).
+- Correlacion contemporanea de log-rendimientos: 0.8790 (descriptiva, no causal).
+- Granger: BBVA -> Santander p=0.1010; Santander -> BBVA p=0.7228 (sin evidencia de causalidad predictiva al 5%).
 - Impulso-respuesta Cholesky (orden BBVA -> Santander): efectos pequenos y transitorios; los intervalos al 95% de las respuestas cruzadas incluyen 0.
 
 ## Visualizaciones
@@ -213,7 +213,7 @@ Referencia actual: **15 tests** que cubren carga y validacion de datos, log-prec
 
 ## Limitaciones
 
-- La frecuencia mensual y 84 observaciones limitan conclusiones fuertes.
+- La frecuencia mensual y 93 observaciones limitan conclusiones fuertes.
 - Los modelos son sensibles a especificacion, rezagos y periodo muestral.
 - ADF y KPSS pueden discrepar (caso Santander en rendimientos); no se aplica una regla automatica.
 - La causalidad de Granger es predictiva, no causalidad economica.

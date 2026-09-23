@@ -10,9 +10,10 @@ Este documento resume la lectura econometrica del analisis generado por `scripts
 - moneda: euros
 - fuente: Yahoo Finance (via `yfinance`)
 - campo de precio: precio ajustado (`Adj Close`)
-- periodo: 2019-01-01 a 2025-12-01
+- periodo: 2019-01-01 a 2026-09-01
 - frecuencia: mensual
-- observaciones: 84 precios y 83 log-rendimientos por serie
+- observaciones: 93 precios y 92 log-rendimientos por serie
+- fecha de snapshot: 2026-09-22
 
 Ambas acciones pertenecen al mismo sector, mercado y moneda, lo que mejora la comparabilidad.
 
@@ -24,17 +25,17 @@ En log-precio (niveles):
 
 | Serie | ADF p-valor | KPSS p-valor | Lectura |
 | --- | --- | --- | --- |
-| BBVA | 0.9909 (no rechaza) | 0.0100 (rechaza) | Concordante: no estacionario |
-| Santander | 0.9892 (no rechaza) | 0.0100 (rechaza) | Concordante: no estacionario |
+| BBVA | 0.9902 (no rechaza) | 0.0100 (rechaza) | Concordante: no estacionario |
+| Santander | 0.9905 (no rechaza) | 0.0100 (rechaza) | Concordante: no estacionario |
 
 En log-rendimientos:
 
 | Serie | ADF p-valor | KPSS p-valor | Lectura |
 | --- | --- | --- | --- |
-| BBVA | ~0 (rechaza) | 0.0929 (no rechaza) | Compatible con estacionariedad |
-| Santander | ~0 (rechaza) | 0.0455 (rechaza) | **Discordante** |
+| BBVA | ~0 (rechaza) | 0.1000 (no rechaza) | Compatible con estacionariedad |
+| Santander | ~0 (rechaza) | 0.0452 (rechaza) | **Discordante** |
 
-Salvedad importante: en Santander, el ADF rechaza la raiz unitaria pero el KPSS rechaza la estacionariedad al 5% (p=0.0455). La discordancia puede deberse al tamano muestral (83 observaciones), a cambios de nivel o a autocorrelacion. No se fuerza una clasificacion automatica; se reportan ambas evidencias.
+Salvedad importante: en Santander, el ADF rechaza la raiz unitaria pero el KPSS rechaza la estacionariedad al 5% (p=0.0452). La discordancia puede deberse al tamano muestral, a cambios de nivel o a autocorrelacion. No se fuerza una clasificacion automatica; se reportan ambas evidencias. En BBVA el KPSS de rendimientos queda en el borde superior tabulado (p=0.1000), por lo que se interpreta como "no se rechaza".
 
 Lectura economica:
 
@@ -47,8 +48,8 @@ El ARIMA se estima sobre log-precios. `d` se determina por ADF (=1 en ambas seri
 
 | Serie | Modelo | AIC | BIC | Ljung-Box (lag 10) |
 | --- | --- | --- | --- | --- |
-| BBVA | ARIMA(0, 1, 0) | -134.2643 | -131.8455 | 0.9986 |
-| Santander | ARIMA(0, 1, 0) | -143.3007 | -140.8818 | 0.9714 |
+| BBVA | ARIMA(0, 1, 0) | -154.2675 | -151.7457 | 0.9981 |
+| Santander | ARIMA(0, 1, 0) | -163.4534 | -160.9316 | 0.9696 |
 
 ARIMA(0,1,0) es un paseo aleatorio: la mejor prediccion de la media es el ultimo log-precio observado. Los p-valores de Ljung-Box son altos, por lo que no se detecta autocorrelacion residual.
 
@@ -63,9 +64,9 @@ Los resultados se guardan en:
 
 ## Comparativo de rendimientos
 
-- BBVA: media mensual 0.0211, volatilidad 0.1050.
-- Santander: media mensual 0.0139, volatilidad 0.1005.
-- Correlacion contemporanea de log-rendimientos: 0.8853.
+- BBVA: media mensual 0.0218, volatilidad 0.1017.
+- Santander: media mensual 0.0152, volatilidad 0.0978.
+- Correlacion contemporanea de log-rendimientos: 0.8790.
 
 La correlacion alta describe dependencia de corto plazo; no implica causalidad economica.
 
@@ -79,31 +80,32 @@ Los resultados se guardan en:
 
 El ARCH-LM se aplica a los residuos de media constante de los log-rendimientos:
 
-- BBVA: p = 0.961
-- Santander: p = 0.907
+- BBVA: p = 0.9565
+- Santander: p = 0.8810
 
 En ambos casos no se rechaza la homocedasticidad, por lo que **no hay evidencia de efectos ARCH**. En consecuencia, **GARCH(1,1) no se estima**. No se reporta persistencia de volatilidad porque no hay base estadistica para ello en estos datos y esta especificacion.
 
 ## Modelo VAR
 
 - Criterio de seleccion: AIC.
-- Rezago seleccionado: VAR(1). AIC=-10.6948, BIC=-10.5187, HQIC=-10.6241, FPE=2.27e-05.
-- Estabilidad: raices del companion con modulo ≈ 7.27 (> 1); el sistema es estable.
-- Portmanteau (10 rezagos): p = 0.5512; sin autocorrelacion residual.
+- Rezago seleccionado: VAR(1). AIC=-10.7704, BIC=-10.6048, HQIC=-10.7036, FPE=2.10e-05.
+- Estabilidad: raices del companion con modulo 6.6963 (> 1); el sistema es estable.
+- Portmanteau (10 rezagos): p = 0.6394; sin autocorrelacion residual.
 - Normalidad multivariante (Jarque-Bera): p ~ 0. Es un diagnostico descriptivo (colas gruesas); no invalida el VAR.
-- ARCH-LM por ecuacion: BBVA p=0.9720; Santander p=0.7526 (sin efectos ARCH).
+- ARCH-LM por ecuacion: BBVA p=0.9658; Santander p=0.6601 (sin efectos ARCH).
 
 ## Causalidad de Granger
 
 | Relacion | H0 | Estadistico F | p-valor | Conclusion |
 | --- | --- | --- | --- | --- |
-| BBVA -> Santander | BBVA no causa-Granger a Santander | 1.5388 | 0.2166 | No se rechaza H0 |
-| Santander -> BBVA | Santander no causa-Granger a BBVA | 0.0543 | 0.8160 | No se rechaza H0 |
+| BBVA -> Santander | BBVA no causa-Granger a Santander | 2.7176 | 0.1010 | No se rechaza H0 |
+| Santander -> BBVA | Santander no causa-Granger a BBVA | 0.1263 | 0.7228 | No se rechaza H0 |
 
 Interpretacion correcta:
 
 - La causalidad de Granger es **predictiva**: evalua si los rezagos de una serie mejoran la prediccion de la otra.
-- No encontrar causalidad de Granger no significa que BBVA y Santander no esten relacionadas como empresas; significa que, a esta frecuencia y con este VAR, los rezagos no aportan informacion predictiva significativa.
+- No encontrar causalidad de Granger no significa que BBVA y Santander no esten relacionadas como empresas; significa que, a esta frecuencia y con este VAR, los rezagos no aportan informacion predictiva significativa al 5%.
+- BBVA -> Santander queda en p=0.1010, cercano pero por encima del 5%; no se fuerza significancia.
 
 ## Impulso-respuesta
 
@@ -121,7 +123,7 @@ El analisis muestra un patron comun en series financieras:
 - un paseo aleatorio para la media (ARIMA(0,1,0) sobre log-precio);
 - sin evidencia de efectos ARCH, por lo que no se estima GARCH;
 - VAR(1) estable y con residuos sin autocorrelacion;
-- sin causalidad de Granger significativa;
+- sin causalidad de Granger significativa al 5%;
 - choques con efectos pequenos y transitorios.
 
 En conjunto, el proyecto muestra un flujo econometrico completo y reproducible. Para el alcance y las limitaciones, consulta `docs/limitations.md`.

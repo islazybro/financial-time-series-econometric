@@ -31,7 +31,7 @@ Configuracion actual:
 
 - BBVA: `BBVA.MC`
 - Santander: `SAN.MC`
-- periodo: 2019-01-01 a 2026-01-01 (`end` exclusivo; el ultimo dato es 2025-12-01)
+- periodo: 2019-01-01 a 2026-09-23 (`end` exclusivo; el ultimo dato disponible es 2026-09-01)
 - frecuencia: mensual (`1mo`)
 - fuente: Yahoo Finance (via `yfinance`)
 - precio: `Adj Close`
@@ -71,7 +71,7 @@ El script de descarga guarda la columna de precio como `Cierre`, pero el valor c
 - minimo recomendado: 36 observaciones por serie;
 - ideal: 60 o mas observaciones.
 
-La muestra actual tiene 84 observaciones (2019-01 a 2025-12).
+La muestra actual tiene 93 observaciones (2019-01 a 2026-09).
 
 ## Validar datos
 
@@ -84,8 +84,8 @@ python scripts/validate_data.py
 Si todo esta bien, deberias ver algo parecido a:
 
 ```text
-BBVA: OK. Observaciones=84, inicio=2019-01-01, fin=2025-12-01, precio_min=1.72, precio_max=19.41
-Santander: OK. Observaciones=84, inicio=2019-01-01, fin=2025-12-01, precio_min=1.27, precio_max=9.95
+BBVA: OK. Observaciones=93, inicio=2019-01-01, fin=2026-09-01, precio_min=1.72, precio_max=25.03
+Santander: OK. Observaciones=93, inicio=2019-01-01, fin=2026-09-01, precio_min=1.27, precio_max=12.70
 ```
 
 ## Despues de validar

@@ -18,9 +18,9 @@ El objetivo es mostrar un flujo econometrico reproducible aplicado a series fina
 ## Limitaciones metodologicas
 
 - La frecuencia mensual reduce ruido, pero tambien elimina informacion diaria relevante.
-- La muestra contiene 84 observaciones, suficiente para un ejercicio aplicado, pero limitada para conclusiones fuertes.
+- La muestra contiene 93 observaciones, suficiente para un ejercicio aplicado, pero limitada para conclusiones fuertes.
 - Los modelos ARIMA, GARCH y VAR son sensibles a especificacion, rezagos, periodo muestral y transformaciones.
-- ADF y KPSS pueden discrepar: en Santander (log-rendimientos) el ADF rechaza raiz unitaria y el KPSS rechaza estacionariedad al 5% (p=0.0455). La discordancia se reporta como salvedad y no se resuelve con una regla automatica.
+- ADF y KPSS pueden discrepar: en Santander (log-rendimientos) el ADF rechaza raiz unitaria y el KPSS rechaza estacionariedad al 5% (p=0.0452). La discordancia se reporta como salvedad y no se resuelve con una regla automatica.
 - La ausencia de causalidad de Granger no implica ausencia de relacion economica entre empresas.
 - La IRF depende del orden de Cholesky; se documento el orden y se verifico la sensibilidad.
 - Los resultados pueden cambiar si se modifica el periodo, la frecuencia, los tickers o la fuente de datos.

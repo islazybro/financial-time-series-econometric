@@ -40,8 +40,10 @@ Edita `config/data_sources.json`:
 ```json
 {
   "start": "2019-01-01",
-  "end": "2026-01-01",
+  "end": "2026-09-23",
   "interval": "1mo",
+  "source": "Yahoo Finance (yfinance)",
+  "price_field": "Adj Close",
   "series": [
     {
       "name": "Apple",
